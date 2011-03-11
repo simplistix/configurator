@@ -1,0 +1,11 @@
+============
+Configurator
+============
+
+This package provides tools for creating application configuration
+stores. It is agnostic of both the source of configuration and its
+use. Its purpose in life is to make the process of obtaining and using
+a tree of configuration data as painless as possible.
+
+To this end, it also includes tools to parse configurations from
+common file formats and examples of common use cases.

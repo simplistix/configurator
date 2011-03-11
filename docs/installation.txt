@@ -1,0 +1,25 @@
+Installation Instructions
+=========================
+
+The easiest way to install Configurator is::
+
+  easy_install configurator
+
+Or, if you're using `zc.buildout`, just specify ``configurator`` as a
+required egg. 
+
+If you're developing a package or application that relies on configurator,
+then add it as a dependency in your package's :file:`setup.py`, for example::
+
+  from setuptools import setup, find_packages
+
+  setup(
+     # ...
+    install_requires = [
+        'configurator',
+       ])
+
+.. note:: 
+
+  This package requires Python 2.6 or newer, but does not work Python
+  3 or above. 
