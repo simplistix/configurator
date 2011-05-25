@@ -1,0 +1,23 @@
+Combining configuration from multiple sources
+=============================================
+
+intro
+
+Extending an existing configuration
+-----------------------------------
+
+docs and examples
+
+augmenting
+
+overriding
+
+Dealing with conflicts
+----------------------
+
+tight schema, limited file formats
+examples
+
+loose schema, application-level resolution
+examples
+
