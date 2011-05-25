@@ -1,0 +1,74 @@
+- list options with history?!
+- different types to be plugged in?
+  (ie: different logger types, provided by different packages)
+- dict sections with history?!
+  (ie: named storages)
+
+
+--------------------------
+from configurator import Parser
+
+parser = Parser()
+parser.set_format('.foo',my_parser)
+
+config = parser.parse('http://foo.com/foo.conf')
+--------------------------
+from configurator import parse,process
+
+config = parse('/foo/bar/config.ini')
+
+config = parse('/foo/bar/config',format='ini')
+
+process(config)
+
+process(config.loggers)
+---------------------------
+
+<instruments>
+  <oboe>
+    sounds = nice
+    weight = light
+  </oboe>
+<instruments>
+<loggers>
+...
+</loggers>
+
+---------------------------
+%include file://foo/bar/instruments.sql
+%include file://foo/bar/instruments format=sql
+<loggers>
+...
+</loggers>
+-----instruments.sql---
+select sound,weight from instruments
+-----------------------
+from configurator import set_format
+set_format('sql',my_parser)
+-----------------------
+
+from configurator import Parser, parse
+
+parser = Parser()
+config = parser.parse('http://foo.com/foo.conf',
+                      schema='/foo/bar.conf')
+
+config = parse('http://foo.com/foo.conf',
+               schema='/foo/bar.conf')
+
+config = parse('http://foo.com/foo.conf',
+               schema=someschema)
+
+-------------------------------------
+
+<key db_url>
+  type  url
+  count 1
+</key>
+<key threads>
+  type int
+  default 5
+</key>
+<section logging>
+  type logger
+</section>
