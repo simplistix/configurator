@@ -59,6 +59,8 @@ config = parse('http://foo.com/foo.conf',
 config = parse('http://foo.com/foo.conf',
                schema=someschema)
 
+config1.override_with(config2)
+
 -------------------------------------
 
 <key db_url>
@@ -72,3 +74,35 @@ config = parse('http://foo.com/foo.conf',
 <section logging>
   type logger
 </section>
+
+
+multi-package use cases:
+------------------------
+- union configs from different files
+- override configs wih local file from other file
+
+underlying storage:
+-------------------
+
+Attribute
+- no name
+- value
+
+Sequence
+- append
+- remove
+
+Mapping
+- set
+- remove
+
+resolution strategies
+---------------------
+
+include/overrride and then validate
+- complain with sources
+- can't work with all formats
+
+loose schema with logical validation
+- works with all formats
+- needs access to source for configuration
