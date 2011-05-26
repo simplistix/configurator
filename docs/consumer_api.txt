@@ -1,0 +1,10 @@
+Consumer API
+============
+
+.. automodule:: configurator
+ :members:
+ :undoc-members:
+
+.. automodule:: configurator.section
+ :members:
+ :undoc-members:

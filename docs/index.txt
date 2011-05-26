@@ -29,7 +29,8 @@ API Documentation
 .. toctree::
    :maxdepth: 1
 
-   api.txt
+   consumer_api.txt
+   producer_api.txt
 
 
 Project documentations
