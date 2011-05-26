@@ -59,8 +59,6 @@ config = parse('http://foo.com/foo.conf',
 config = parse('http://foo.com/foo.conf',
                schema=someschema)
 
-config1.override_with(config2)
-
 -------------------------------------
 
 <key db_url>
