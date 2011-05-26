@@ -13,9 +13,10 @@ Usage documentation
    basic.txt
    combining.txt
    parsers.txt
+   writers.txt
 
-Included parsers
-----------------
+Included configuration types
+----------------------------
 
 .. toctree::
    :maxdepth: 1

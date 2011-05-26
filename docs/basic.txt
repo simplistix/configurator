@@ -17,3 +17,7 @@ show schema in one format, config in another
 
 show python-only / declarative schema definiton.
 
+Writing a configuration to storage
+----------------------------------
+
+explanation, examples
