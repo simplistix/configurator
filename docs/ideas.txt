@@ -97,12 +97,45 @@ Mapping
 - remove
 
 resolution strategies
----------------------
+=====================
 
 include/overrride and then validate
+-----------------------------------
+
 - complain with sources
 - can't work with all formats
 
+.. code-block:: python
+
+   config = parse('./extends.conf',
+                  schema='/foo/specific.conf')
+
 loose schema with logical validation
+------------------------------------
+
 - works with all formats
 - needs access to source for configuration
+
+.. code-block:: python
+
+    from configurator import parse,api
+    config = parse('some.conf',
+                   schema='/foo/lax.conf')
+
+    seen = dict()
+    errors = []
+    for view in config.views:
+      discriminator = (view.name,view.pattern)
+      if disriminator in seen:
+         errors.append((
+             'Duplicate definition for %s found at %r, '
+             'first defined at %s') % (
+                 discriminator,
+                 api(view).source,
+                 api(seen[discriminator]).source,
+                 )
+      else:
+         config.add_view(*discriminator)
+         seen[discriminator]=view
+    if errors:
+      raise Exception(repr(errors))
