@@ -16,6 +16,7 @@ config = parser.parse('http://foo.com/foo.conf')
 from configurator import parse,process
 
 config = parse('/foo/bar/config.ini')
+config = parse(text=file.read(),path='somewhere_not_real.conf')
 
 config = parse('/foo/bar/config',format='ini')
 
