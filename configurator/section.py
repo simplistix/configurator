@@ -1,12 +1,13 @@
 # Copyright (c) 2011 Simplistix Ltd
 # See license.txt for license details.
 
-_marker = object()
+from . import _marker
+from .api import API
 
 class Section(object):
 
     def __init__(self):
-        self._api = SectionAPI()
+        self._api = API()
 
     def __getitem__(self,name):
         return self._api.get(name)

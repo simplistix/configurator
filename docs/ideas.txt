@@ -80,21 +80,6 @@ multi-package use cases:
 - union configs from different files
 - override configs wih local file from other file
 
-underlying storage:
--------------------
-
-Attribute
-- no name
-- value
-
-Sequence
-- append
-- remove
-
-Mapping
-- set
-- remove
-
 resolution strategies
 =====================
 
