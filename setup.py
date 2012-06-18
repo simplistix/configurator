@@ -1,10 +1,20 @@
-# Copyright (c) 2011 Simplistix Ltd
+# Copyright (c) 2011-2012 Simplistix Ltd
 # See license.txt for license details.
 
 import os
-from setuptools import setup,find_packages
+from ConfigParser import RawConfigParser
+from setuptools import setup, find_packages
 
 base_dir = os.path.dirname(__file__)
+
+# read test requirements from tox.ini
+config = RawConfigParser()
+config.read(os.path.join(base_dir, 'tox.ini'))
+test_requires = []
+for item in config.get('testenv', 'deps').split():
+    test_requires.append(item)
+# Tox doesn't need itself, but we need it for testing.
+test_requires.append('tox')
 
 setup(
     name='configurator',
@@ -18,17 +28,12 @@ setup(
     classifiers=[
         'Development Status :: 3 - Alpha',
         # 'Development Status :: 5 - Production/Stable',
+        'License :: OSI Approved :: MIT License',
         ],    
     packages=find_packages(),
-    include_package_data=True,
     zip_safe=False,
-    install_requires = (
-        ),
+    include_package_data=True,
     extras_require=dict(
-        test=[
-            'mock',
-            'manuel',
-            'testfixtures',
-            ],
-        ),
+        test=test_requires,
+        )
     )
