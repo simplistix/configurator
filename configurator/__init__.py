@@ -1,10 +1,13 @@
 # Copyright (c) 2011 Simplistix Ltd
 # See license.txt for license details.
 
-# a marker for defaults
-_marker = object()
+# a marker for defaults and missing values
+class Marker(object):
+    def __repr__(self):
+        return '<Marker>'
+marker = Marker()
 
-def parse(config,schema=None):
+def parse(config, schema=None):
     raise NotImplementedError()
 
 def api(section):
