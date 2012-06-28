@@ -3,6 +3,7 @@
 
 from . import marker
 from .exceptions import SourceError
+from ._utils import get_source
 
 class Attribute:
     """
@@ -83,7 +84,7 @@ class API(object):
     def __init__(self, source):
         self.by_name = dict()
         self.by_order = list()
-        self._source = source
+        self._source = source or get_source()
         self._history = []
         
     def source(self, name=None):
@@ -134,7 +135,7 @@ class API(object):
         string. While this is optional, it is strongly recommended.
         """
         previous = self.by_name.get(name)
-        a = Attribute(name, value, 'set', source, 0, previous)
+        a = Attribute(name, value, 'set', source or get_source(), 0, previous)
         if previous is None:
             a.index = len(self.by_order)
             self.by_order.append(a)
@@ -151,7 +152,12 @@ class API(object):
         The source location this value came from can also be supplied as a
         string. While this is optional, it is strongly recommended.
         """
-        a = Attribute(None, value, 'append', source, len(self.by_order), None)
+        a = Attribute(
+            None, value, 'append',
+            source or get_source(),
+            len(self.by_order),
+            None
+            )
         self.by_order.append(a)
         self._history.append(a)
     
@@ -163,6 +169,7 @@ class API(object):
         passed. If the latter, all occurences of that value within the
         section will be removed.
         """
+        source = source or get_source()
         if name is not marker:
             previous = self.by_name.get(name, marker)
             if previous is not marker and previous.value is not marker:
