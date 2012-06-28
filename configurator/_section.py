@@ -2,7 +2,7 @@
 # See license.txt for license details.
 
 from . import marker
-from .api import API
+from ._api import API
 
 class Section(object):
 

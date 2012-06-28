@@ -1,4 +1,4 @@
-from configurator.api import API
+from configurator._api import API
 
 def parse(source,text):
     node = API()

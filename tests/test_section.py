@@ -1,4 +1,4 @@
-# Copyright (c) 2011 Simplistix Ltd
+# Copyright (c) 2011-2012 Simplistix Ltd
 # See license.txt for license details.
 
 from unittest import TestCase
@@ -7,8 +7,10 @@ from testfixtures import compare,ShouldRaise,Comparison as C
 class Tests(TestCase):
 
     def setUp(self):
-        from configurator.section import Section
+        from configurator import api
+        from configurator._section import Section
         self.s = Section()
+        self.a = api(self.s)
 
     # simple access
     
@@ -40,7 +42,7 @@ class Tests(TestCase):
         compare(self.s.foo,'bar')
         
     def test_tree(self):
-        from configurator.section import Section
+        from configurator._section import Section
         child = Section()
         self.s.child = child
         self.assertTrue(self.s.child is child)

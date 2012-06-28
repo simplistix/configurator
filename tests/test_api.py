@@ -2,7 +2,7 @@
 # See license.txt for license details.
 
 from configurator import marker
-from configurator.api import API, Attribute
+from configurator._api import API, Attribute
 from configurator.exceptions import SourceError
 from unittest import TestCase
 from testfixtures import compare, Comparison as C, ShouldRaise
