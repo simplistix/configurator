@@ -1,113 +1,195 @@
 # Copyright (c) 2011-2012 Simplistix Ltd
 # See license.txt for license details.
 
-from . import _marker
+from . import marker
 from .exceptions import SourceError
 
 class Attribute:
+    """
+    A container for the value in a configuration.
+    The container records the name the value is associated with, or ``None``
+    if there is no name associated with this value.
+    It also containts a description of the source the value came from,
+    and a string containing the action that caused it to be present
+    and the :class:`Attribute` representing the previous value associated
+    if there was one.
 
-    def __init__(self, value, source, action, previous=None):
+    If the ``action`` attribute is ``'removed'``, it indicates that this
+    value has been removed.
+    """
+
+    __slots__ = ('name', 'value', 'action', 'source', 'index', 'previous')
+    
+    def __init__(self, name, value, action, source, index, previous):
+        """
+        .. note:: You should never instantiate this class yourself.
+        """
+        self.name = name
         self.value = value
-        self.source = source
         self.action = action
+        self.source = source
         self.previous = previous
+        self.index = index
 
     def __repr__(self):
-        return 'A'+repr((self.value, self.source, self.action))
+        return 'Attribute'+repr(tuple(
+            (getattr(self, name) for name in self.__slots__)
+            ))
+
+    def __str__(self):
+        return 'Attribute(%s)' % (', '.join(
+            ('%s=%r' % (name, getattr(self, name)) for name in self.__slots__)
+            ))
 
     def __eq__(self,other):
         if not isinstance(other, Attribute):
             return False
-        return (
-            self.value == other.value and
-            self.action == other.action
-            )
+        for name in self.__slots__[:-1]:
+            if getattr(self, name) != getattr(other, name):
+                return False
+        return True
 
     def __ne__(self, other):
         return not(self==other)
 
-    def __call__(self, default):
-        if self.action != 'remove':
-            return self.value
-        return default
+    def history(self):
+        """
+        Returns a sequence of :class:`Attribute` instances representing the
+        history of this :class:`Attribute`. The last item in this sequence
+        with be the :class:`Attribute` on which this method was called.
+
+        .. note::
+        
+          History is ordered from oldest to newest, so that the natural
+          ordering of a history sequence will be similar to that of a
+          traceback.
+        """
+        history = []
+        attr = self
+        while attr:
+            history.append(attr)
+            attr = attr.previous
+        history.reverse()
+        return history
     
-class Sequence(list):
-
-    def __call__(self, default):
-        result = []
-        for attr in self:
-            if attr.action != 'remove':
-                result.append(attr.value)
-        return result
-
-class API(dict):
+class API(object):
     """
     The API for storing configuration information in a
     :class:`~configurator.section.Section` and accessing specific
     details about the information stored.
     """
     # introspection
-    
-    def source(self, name, value=_marker):
-        obj = self[name]
-        if isinstance(obj, Sequence):
-            if value is _marker and obj:
-                value = obj[0].value
-            attr = _marker
-            for potential_attr in obj:
-                if value == potential_attr.value:
-                    attr = potential_attr
-                    break
-            if attr is _marker:
-                raise SourceError('%r not found in sequence for %r' % (
-                    value, name
-                    ))
-            return attr.source
-        else:
-            if value is not _marker and obj.value != value:
-                raise SourceError('%r is not current value of %r' % (
-                    value, name
-                    ))
-            return obj.source
 
-    def history(self, name, value=_marker):
-        history = []
-        attr = self[name]
-        while attr:
-            history.append(attr)
-            attr = attr.previous
-        return history
+    def __init__(self, source):
+        self.by_name = dict()
+        self.by_order = list()
+        self._source = source
+        self._history = []
+        
+    def source(self, name=None):
+        """
+        Returns the current source location associated with the name
+        passed in. If no name is passed, the source location where section
+        associated with this API was first defined will be returned.
+
+        If the source location cannot be worked out for any reason,
+        ``None`` will be returned.
+        """
+        if name is None:
+            return self._source
+        attr = self.by_name.get(name)
+        if attr is None or attr.value is marker:
+            return None
+        return attr.source
+
+    def history(self, name=None):
+        """
+        Returns a sequence of :class:`Attribute` instances representing the
+        history of the item associated with the name passed in. If no name
+        is passed in, the history of the entire section will be returned.
+
+        If a name is passed and no value is associated with that name in
+        this section, a :class:`KeyError` will be raised.
+        If the section is empty and no name is passed, an empty list will
+        be returned.
+
+        .. note::
+        
+          History is ordered from oldest to newest, so that the natural
+          ordering of a history sequence will be similar to that of a
+          traceback.
+        """
+        if name is None:
+            return self._history
+        return self.by_name[name].history()
 
     # modification
     
     def set(self, name, value, source=None):
-        previous = super(API, self).get(name)
-        if isinstance(previous, Sequence):
-            raise ValueError('%r is a sequence, cannot set it' % name)
-        self[name] = Attribute(value, source, 'set', previous=previous)
+        """
+        Set the value for the supplied name in the section associated with this
+        api to be that supplied.
 
-    def append(self, name, value, source=None):
-        sequence = super(API, self).get(name)
-        if sequence is None:
-            self[name] = sequence = Sequence()
-        elif not isinstance(sequence, Sequence):
-            raise ValueError('%r is not a sequence, cannot append to it' % name)
-        sequence.append(Attribute(value, source, 'append'))
-
-    def remove(self, name, value=_marker, source=None):
-        current = super(API, self).get(name)
-        if isinstance(current, Sequence) and value is not _marker:
-            for i, item in enumerate(current):
-                if item.value==value:
-                    current[i] = Attribute(value, source, 'remove',
-                                           previous=item)
+        The source location this value came from can also be supplied as a
+        string. While this is optional, it is strongly recommended.
+        """
+        previous = self.by_name.get(name)
+        a = Attribute(name, value, 'set', source, 0, previous)
+        if previous is None:
+            a.index = len(self.by_order)
+            self.by_order.append(a)
         else:
-            self[name] = Attribute(value, source, 'remove',
-                                   previous=current)
+            a.index = previous.index
+            self.by_order[previous.index] = a
+        self.by_name[name] = a
+        self._history.append(a)
+
+    def append(self, value, source=None):
+        """
+        Append a value to the section associated with this api.
+
+        The source location this value came from can also be supplied as a
+        string. While this is optional, it is strongly recommended.
+        """
+        a = Attribute(None, value, 'append', source, len(self.by_order), None)
+        self.by_order.append(a)
+        self._history.append(a)
+    
+    def remove(self, name=marker, value=marker, source=None):
+        """
+        Remove a value from the section associated with this api.
+
+        The name the value is associated with or the value itself may be
+        passed. If the latter, all occurences of that value within the
+        section will be removed.
+        """
+        if name is not marker:
+            previous = self.by_name.get(name, marker)
+            if previous is not marker and previous.value is not marker:
+                a = Attribute(name, marker, 'remove', source, previous.index, previous)
+                self.by_name[name] = a
+                self.by_order[previous.index] = a
+                self._history.append(a)
+        if value is not marker:
+            for i, previous in enumerate(self.by_order):
+                if previous.value == value:
+                    name = previous.name
+                    a = Attribute(name, marker, 'remove', source, previous.index, previous)
+                    if name:
+                        self.by_name[name] = a
+                    self.by_order[i] = a
+                    self._history.append(a)
 
     # access
+
+    def items(self):
+        """
+        Return a sequence of :class:`Attribute` instances representing the
+        current contents of the section this api corresponds to.
+        """
+        return [a for a in self.by_order if a.action != 'remove']
     
-    def get(self, name, default=_marker):
+    def get(self, name, default=marker):
         """
         Get the named attribute from the section this api corresponds
         to. If the section has not such named attribute, the
@@ -117,10 +199,10 @@ class API(dict):
         should be obtained using the methods on the associated
         :class:`~configurator.section.Section`.
         """
-        value = dict.get(self, name, _marker)
-        if value is _marker:
+        a = self.by_name.get(name, marker)
+        if a is marker or a.action=='remove':
             return default
-        return value(default)
+        return a.value
 
 
     
