@@ -171,6 +171,13 @@ class APITests(SourceMixin, TestCase):
             Attribute('foo', 'v2', 'set', 's2', 0, None),
             ], self.a.history())
 
+    def test_set_set_indexes(self):
+        self.a.set('foo', 'v1', 's1')
+        self.a.set('bar', 'v2', 's2')
+        compare([Attribute('foo', 'v1', 'set', 's1', 0, None),
+                 Attribute('bar', 'v2', 'set', 's2', 1, None)],
+                self.a.items())
+        
     # append tests
     
     def test_append(self):
