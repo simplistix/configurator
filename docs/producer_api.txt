@@ -1,6 +1,6 @@
 Producer API
 ============
 
-.. automodule:: configurator.api
+.. automodule:: configurator._api
  :members:
  :undoc-members:

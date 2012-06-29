@@ -5,6 +5,6 @@ Consumer API
  :members:
  :undoc-members:
 
-.. automodule:: configurator.section
+.. automodule:: configurator._section
  :members:
  :undoc-members:

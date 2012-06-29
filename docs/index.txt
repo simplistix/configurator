@@ -34,8 +34,8 @@ API Documentation
    producer_api.txt
 
 
-Project documentations
-----------------------
+Project documentation
+---------------------
 
 .. toctree::
    :maxdepth: 1
