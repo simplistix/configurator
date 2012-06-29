@@ -17,5 +17,5 @@ class TestUtils(TestCase):
             file = __file__
         self.assertEqual(
             level1(),
-            "File '%s', line 13, in level1" % file
+            "File %r, line 13, in level1" % file
             )
