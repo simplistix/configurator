@@ -5,20 +5,10 @@ from configurator import marker
 from configurator._api import API, Attribute
 from configurator.exceptions import SourceError
 from unittest import TestCase
-from testfixtures import compare, Comparison as C, Replacer, ShouldRaise
-from testfixtures.comparison import register, compare_sequence
+from testfixtures import compare, ShouldRaise
 
-class SourceMixin(object):
-    
-    def setUp(self):
-        def get_source():
-            return 'default_source'
-        self.r = Replacer()
-        self.r.replace('configurator._api.get_source', get_source)
+from .common import SourceMixin
 
-    def tearDown(self):
-        self.r.restore()
-        
 class AttributeTests(SourceMixin, TestCase):
 
     def _check_eq(self, a, b):
