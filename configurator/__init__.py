@@ -17,18 +17,3 @@ def api(section):
 def process(section):
     "Process any actions present on the section passed"
     raise NotImplementedError()
-
-class Parser(object):
-
-    def __init__(self):
-        raise NotImplementedError()
-
-    def set_format(self, extension, parser):
-        raise NotImplementedError()
-        
-    def set_schema(self, schema):
-        raise NotImplementedError()
-        
-    def parse(self, config):
-        raise NotImplementedError()
-        
