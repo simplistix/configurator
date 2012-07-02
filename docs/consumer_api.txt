@@ -3,8 +3,11 @@ Consumer API
 
 .. automodule:: configurator
  :members:
- :undoc-members:
 
 .. automodule:: configurator._section
  :members:
- :undoc-members:
+ :special-members:
+
+.. attribute:: configurator.marker
+
+  A marker singleton for defaults and missing values

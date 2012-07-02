@@ -1,4 +1,4 @@
-# Copyright (c) 2011 Simplistix Ltd
+# Copyright (c) 2011-2012 Simplistix Ltd
 # See license.txt for license details.
 
 # a marker for defaults and missing values
@@ -8,6 +8,7 @@ class Marker(object):
 marker = Marker()
 
 def parse(config, schema=None, transform=None, process=True):
+    "Parse a configuration"
     raise NotImplementedError()
 
 def api(section):

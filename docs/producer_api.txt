@@ -4,3 +4,7 @@ Producer API
 .. automodule:: configurator._api
  :members:
  :undoc-members:
+
+.. automodule:: configurator.parser
+ :members:
+ :undoc-members:
