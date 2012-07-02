@@ -7,7 +7,7 @@ class Marker(object):
         return '<Marker>'
 marker = Marker()
 
-def parse(config, schema=None):
+def parse(config, schema=None, transform=None, process=True):
     raise NotImplementedError()
 
 def api(section):
@@ -16,4 +16,8 @@ def api(section):
 
 def process(section):
     "Process any actions present on the section passed"
+    raise NotImplementedError()
+
+def transform(section, *transformations):
+    "Apply the supplied transformations to the section specified."
     raise NotImplementedError()
