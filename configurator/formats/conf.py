@@ -1,7 +1,9 @@
-from configurator._api import API
+from configurator import api
+from configurator._section import Section
 
-def parse(source,text):
-    node = API()
+def parse(text, source=None):
+    section = Section()
+    node = api(section)
     for i,line in enumerate(text.split('\n')):
         line_no = i+1
         line = line.strip()

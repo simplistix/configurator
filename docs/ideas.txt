@@ -1,28 +1,15 @@
-- list options with history?!
 - different types to be plugged in?
   (ie: different logger types, provided by different packages)
-- dict sections with history?!
-  (ie: named storages)
-
 
 --------------------------
-from configurator import Parser
-
-parser = Parser()
-parser.set_format('.foo',my_parser)
-
-config = parser.parse('http://foo.com/foo.conf')
---------------------------
-from configurator import parse,process
+from configurator import parse, process
 
 config = parse('/foo/bar/config.ini')
-config = parse(text=file.read(),path='somewhere_not_real.conf')
-
-config = parse('/foo/bar/config',format='ini')
-
+config = parse('/foo/bar/config', format='ini', process=False)
+process(config.loggers)
+...
 process(config)
 
-process(config.loggers)
 ---------------------------
 
 <instruments>
@@ -61,6 +48,7 @@ config = parse('http://foo.com/foo.conf',
                schema=someschema)
 
 -------------------------------------
+# schemas
 
 <key db_url>
   type  url
@@ -72,6 +60,22 @@ config = parse('http://foo.com/foo.conf',
 </key>
 <section logging>
   type logger
+  count *
+</section>
+
+...
+
+<section logging>
+  type logger
+  count +
+</section>
+
+# schema for schemas:
+<key *>
+  type="key"
+  count="*"
+</key>
+<section *>
 </section>
 
 
@@ -123,3 +127,22 @@ loose schema with logical validation
          seen[discriminator]=view
     if errors:
       raise Exception(repr(errors))
+
+Schemas
+=======
+
+- check structure is valid
+- check values are valid
+- convert types of values
+- attach actions that can be processed later
+
+
+name -> type mapping
+
+Actions
+=======
+
+- leaf-first processing
+- order of tree
+- should be able to replace section they're attached to?
+
