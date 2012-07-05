@@ -5,7 +5,7 @@ from unittest import TestCase
 from testfixtures import compare, ShouldRaise, Comparison as C
 
 from configurator import api
-from configurator._section import Section
+from configurator.section import Section
 
 from .common import SourceMixin
 

@@ -10,7 +10,7 @@ class SourceMixin(object):
             return 'default_source'
         self.r = Replacer()
         self.r.replace('configurator._api.get_source', get_source)
-        self.r.replace('configurator._section.get_source', get_source)
+        self.r.replace('configurator.section.get_source', get_source)
 
     def tearDown(self):
         self.r.restore()

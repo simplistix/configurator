@@ -1,5 +1,5 @@
 from configurator import api
-from configurator._section import Section
+from configurator.section import Section
 
 def parse(text, source=None):
     section = Section()

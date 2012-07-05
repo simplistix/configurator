@@ -4,7 +4,7 @@ Consumer API
 .. automodule:: configurator
  :members:
 
-.. automodule:: configurator._section
+.. automodule:: configurator.section
  :members:
  :special-members:
 
