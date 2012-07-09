@@ -67,6 +67,7 @@ class Tests(Base, TestCase):
         child = Section()
         self.s.child = child
         self.assertTrue(self.s.child is child)
+        compare(api(child).name, 'child')
 
     def test_set_special_name(self):
         self.s.get = 'foo'
@@ -84,13 +85,22 @@ class Tests(Base, TestCase):
         compare(self.a.source('foo'), 'default_source')
 
     def test_section_source(self):
-        s = Section('my source')
+        s = Section(source='my source')
         compare(api(s).source(), 'my source')
 
     def test_section_source_default(self):
         s = Section()
         compare(api(s).source(), 'default_source')
 
+    # names
+    def test_named(self):
+        s = Section(name='a name')
+        compare(api(s).name, 'a name')
+        
+    def test_not_named(self):
+        s = Section()
+        compare(api(s).name, None)
+        
 class TestIteration(Base):
     
     # iteration

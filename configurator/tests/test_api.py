@@ -1,9 +1,10 @@
 # Copyright (c) 2011-2012 Simplistix Ltd
 # See license.txt for license details.
 
-from configurator import marker
+from configurator import api, marker
 from configurator._api import API, Attribute
 from configurator.exceptions import SourceError
+from configurator.section import Section
 from unittest import TestCase
 from testfixtures import compare, ShouldRaise
 
@@ -105,7 +106,7 @@ class APITests(SourceMixin, TestCase):
 
     def setUp(self):
         super(APITests, self).setUp()
-        self.a = API(None)
+        self.a = API(None, None)
 
     # set tests
     
@@ -453,7 +454,7 @@ class APITests(SourceMixin, TestCase):
             ], self.a.history())
         
     def test_source_section(self):
-        compare('source', API('source').source())
+        compare('source', API(None, 'source').source())
         
     def test_source_section_empty(self):
         compare('default_source', self.a.source())
@@ -478,3 +479,13 @@ class APITests(SourceMixin, TestCase):
     def test_history_empty_section(self):
         compare([], self.a.history())
 
+    # name only tests
+    def test_set_section(self):
+        s = Section()
+        self.a.set('foo', s)
+        compare('foo', api(s).name)
+
+    def test_append_section(self):
+        s = Section()
+        self.a.append(s)
+        compare(None, api(s).name)

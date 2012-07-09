@@ -1,8 +1,8 @@
 # Copyright (c) 2011-2012 Simplistix Ltd
 # See license.txt for license details.
 
-from . import marker
 from .exceptions import SourceError
+from . import api, marker
 from ._utils import get_source
 
 class Attribute:
@@ -81,7 +81,8 @@ class API(object):
     """
     # introspection
 
-    def __init__(self, source):
+    def __init__(self, name, source):
+        self.name = name
         self.by_name = dict()
         self.by_order = list()
         self._source = source or get_source()
@@ -144,6 +145,10 @@ class API(object):
             self.by_order[previous.index] = a
         self.by_name[name] = a
         self._history.append(a)
+        # avoid import loop
+        from .section import Section
+        if isinstance(value, Section):
+            api(value).name = name
 
     def append(self, value, source=None):
         """

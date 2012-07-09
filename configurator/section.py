@@ -13,14 +13,14 @@ class Section(object):
     :class:`Section` instances.
     """
 
-    def __init__(self, source=None):
+    def __init__(self, name=None, source=None):
         """
         Create a new configuration section.
         
         The source location that this section came from can also be supplied as
         a string. While this is optional, it is strongly recommended.
         """
-        self._api = API(source or get_source())
+        self._api = API(name, source or get_source())
 
     def __getitem__(self, name):
         """
