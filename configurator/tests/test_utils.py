@@ -12,9 +12,9 @@ class TestUtils(TestCase):
         def level1():
             return level2()
         if __file__.endswith('.pyc'):
-            file = __file__[:-1]
+            file = __file__[:-1] # pragma: no cover
         else:
-            file = __file__
+            file = __file__ # pragma: no cover
         self.assertEqual(
             level1(),
             "File %r, line 13, in level1" % file
