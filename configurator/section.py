@@ -27,10 +27,10 @@ class Section(object):
         Access a configuration value by name. If no configuration item exists
         for that name, a :class:`KeyError` will be raised.
         """
-        value =  self._api.get(name, marker)
-        if value is marker:
+        a =  self._api.get(name, marker)
+        if a is marker:
             raise KeyError(name)
-        return value
+        return a.value
     
     def __setitem__(self, name, value):
         """
@@ -46,17 +46,20 @@ class Section(object):
         :class:`Section`. If no value is associated, the supplied default is
         returned. If no default is supplied, ``None`` will be returned.
         """
-        return self._api.get(name, default)
+        a =  self._api.get(name, marker)
+        if a is marker:
+            return default
+        return a.value
     
     def __getattr__(self, name):
         """
         Access a configuration value by name. If no configuration item exists
         for that name, an :class:`AttributeError` will be raised.
         """
-        value = self._api.get(name, marker)
-        if value is marker:
+        a = self._api.get(name, marker)
+        if a is marker:
             raise AttributeError(name)
-        return value
+        return a.value
 
     def __setattr__(self, name, value):
         """

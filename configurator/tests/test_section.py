@@ -61,7 +61,7 @@ class Tests(Base, TestCase):
     
     def test_setattr(self):
         self.s.foo='bar'
-        compare(self.a.get('foo'), 'bar')
+        compare(self.a.get('foo').value, 'bar')
 
     def test_tree(self):
         child = Section()
@@ -70,7 +70,7 @@ class Tests(Base, TestCase):
 
     def test_set_special_name(self):
         self.s.get = 'foo'
-        compare(self.a.get('get'), 'foo')
+        compare(self.a.get('get').value, 'foo')
         compare(self.s.get('get'), 'foo')
         compare(self.s['get'], 'foo')
         

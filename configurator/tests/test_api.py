@@ -118,7 +118,8 @@ class APITests(SourceMixin, TestCase):
         # set
         self.a.set('foo', 'value')
         # after
-        compare('value', self.a.get('foo'))
+        compare(Attribute('foo', 'value', 'set', 'default_source', 0, None),
+                self.a.get('foo'))
         compare([Attribute('foo', 'value', 'set', 'default_source', 0, None)],
                 self.a.items())
         compare('default_source',
@@ -132,7 +133,8 @@ class APITests(SourceMixin, TestCase):
         # set
         self.a.set('foo', None)
         # after
-        compare(None, self.a.get('foo'))
+        compare(Attribute('foo', None, 'set', 'default_source', 0, None),
+                self.a.get('foo'))
         compare([Attribute('foo', None, 'set', 'default_source', 0, None)],
                 self.a.items())
         compare('default_source',
@@ -147,7 +149,8 @@ class APITests(SourceMixin, TestCase):
         self.a.set('foo', 'v1', 's1')
         self.a.set('foo', 'v2', 's2')
         # after
-        compare('v2', self.a.get('foo'))
+        compare(Attribute('foo', 'v2', 'set', 's2', 0, None),
+                self.a.get('foo'))
         compare([Attribute('foo', 'v2', 'set', 's2', 0, None)],
                 self.a.items())
         compare('s2',
@@ -399,7 +402,8 @@ class APITests(SourceMixin, TestCase):
         self.a.remove(name='foo', source='s7')
         # check
         compare('default', self.a.get('foo', 'default'))
-        compare('v4', self.a.get('bar', 'default'))
+        compare(Attribute('bar', 'v4', 'set', 's4', 1, None),
+                self.a.get('bar', 'default'))
         compare([
             Attribute('bar', 'v4', 'set', 's4', 1, None),
             Attribute(None, 'v3', 'append', 's3', 2, None),

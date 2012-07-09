@@ -198,7 +198,7 @@ class API(object):
     
     def get(self, name, default=marker):
         """
-        Get the named attribute from the section this api corresponds
+        Get the named :class:`Attribute` from the section this api corresponds
         to. If the section has not such named attribute, the
         default is returned.
 
@@ -209,7 +209,7 @@ class API(object):
         a = self.by_name.get(name, marker)
         if a is marker or a.action=='remove':
             return default
-        return a.value
+        return a
 
 
     
