@@ -178,7 +178,9 @@ class API(object):
         if name is not marker:
             previous = self.by_name.get(name, marker)
             if previous is not marker and previous.value is not marker:
-                a = Attribute(name, marker, 'remove', source, previous.index, previous)
+                a = Attribute(
+                    name, marker, 'remove', source, previous.index, previous
+                    )
                 self.by_name[name] = a
                 self.by_order[previous.index] = a
                 self._history.append(a)
@@ -186,7 +188,9 @@ class API(object):
             for i, previous in enumerate(self.by_order):
                 if previous.value == value:
                     name = previous.name
-                    a = Attribute(name, marker, 'remove', source, previous.index, previous)
+                    a = Attribute(
+                        name, marker, 'remove', source, previous.index, previous
+                        )
                     if name:
                         self.by_name[name] = a
                     self.by_order[i] = a
