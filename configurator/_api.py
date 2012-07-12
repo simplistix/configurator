@@ -79,15 +79,17 @@ class API(object):
     :class:`~configurator.section.Section` and accessing specific
     details about the information stored.
     """
-    # introspection
 
-    def __init__(self, name, source):
+    def __init__(self, section, name, source):
         self.name = name
         self.by_name = dict()
         self.by_order = list()
+        self._section = section
         self._source = source or get_source()
         self._history = []
         
+    # introspection
+
     def source(self, name=None):
         """
         Returns the current source location associated with the name
@@ -135,6 +137,8 @@ class API(object):
         The source location this value came from can also be supplied as a
         string. While this is optional, it is strongly recommended.
         """
+        if isinstance(value, API):
+            value = value._section
         previous = self.by_name.get(name)
         a = Attribute(name, value, 'set', source or get_source(), 0, previous)
         if previous is None:
@@ -157,6 +161,8 @@ class API(object):
         The source location this value came from can also be supplied as a
         string. While this is optional, it is strongly recommended.
         """
+        if isinstance(value, API):
+            value = value._section
         a = Attribute(
             None, value, 'append',
             source or get_source(),
@@ -165,7 +171,7 @@ class API(object):
             )
         self.by_order.append(a)
         self._history.append(a)
-    
+
     def remove(self, name=marker, value=marker, source=None):
         """
         Remove a value from the section associated with this api.

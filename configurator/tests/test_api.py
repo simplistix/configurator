@@ -106,7 +106,7 @@ class APITests(SourceMixin, TestCase):
 
     def setUp(self):
         super(APITests, self).setUp()
-        self.a = API(None, None)
+        self.a = API(None, None, None)
 
     # set tests
     
@@ -171,7 +171,23 @@ class APITests(SourceMixin, TestCase):
         compare([Attribute('foo', 'v1', 'set', 's1', 0, None),
                  Attribute('bar', 'v2', 'set', 's2', 1, None)],
                 self.a.items())
+
+    def test_set_section(self):
+        s = Section()
+        self.a.set('foo', s)
+        self.assertTrue(self.a.get('foo').value is s)
+
+    def test_set_api(self):
+        s = Section()
+        a = api(s)
+        self.a.set('foo', a)
+        self.assertTrue(self.a.get('foo').value is s)
         
+    def test_set_section_name(self):
+        s = Section()
+        self.a.set('foo', s)
+        compare('foo', api(s).name)
+
     # append tests
     
     def test_append(self):
@@ -215,6 +231,24 @@ class APITests(SourceMixin, TestCase):
             Attribute(None, 'v2', 'append', 's2', 1, None)
             ], self.a.history())
         
+    def test_append_section(self):
+        expected = Section()
+        self.a.append(expected)
+        actual = tuple(self.a.items())[0].value
+        self.assertTrue(expected is actual)
+
+    def test_append_api(self):
+        expected = Section()
+        a = api(expected)
+        self.a.append(a)
+        actual = tuple(self.a.items())[0].value
+        self.assertTrue(expected is actual)
+        
+    def test_append_section_name(self):
+        s = Section()
+        self.a.append(s)
+        compare(None, api(s).name)
+
     # remove tests
 
     def test_remove_name(self):
@@ -454,7 +488,7 @@ class APITests(SourceMixin, TestCase):
             ], self.a.history())
         
     def test_source_section(self):
-        compare('source', API(None, 'source').source())
+        compare('source', API(None, None, 'source').source())
         
     def test_source_section_empty(self):
         compare('default_source', self.a.source())
@@ -479,13 +513,5 @@ class APITests(SourceMixin, TestCase):
     def test_history_empty_section(self):
         compare([], self.a.history())
 
-    # name only tests
-    def test_set_section(self):
-        s = Section()
-        self.a.set('foo', s)
-        compare('foo', api(s).name)
 
-    def test_append_section(self):
         s = Section()
-        self.a.append(s)
-        compare(None, api(s).name)

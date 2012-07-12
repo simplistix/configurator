@@ -20,7 +20,7 @@ class Section(object):
         The source location that this section came from can also be supplied as
         a string. While this is optional, it is strongly recommended.
         """
-        self._api = API(name, source or get_source())
+        self._api = API(self, name, source or get_source())
 
     def __getitem__(self, name):
         """
