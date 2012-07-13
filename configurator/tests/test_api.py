@@ -271,6 +271,22 @@ class APITests(SourceMixin, TestCase):
             Attribute('foo', marker, 'remove', 'default_source', 0, None)
             ], self.a.history())
 
+    def test_remove_name_not_present(self):
+        # we record the remove, handy for merging Sections
+        # remove
+        self.a.remove('foo')
+        # check
+        compare([],
+                self.a.items())
+        compare(None,
+                self.a.source(name='foo'))
+        compare([
+            Attribute('foo', marker, 'remove', 'default_source', 0, None)
+            ], self.a.history(name='foo'))
+        compare([
+            Attribute('foo', marker, 'remove', 'default_source', 0, None)
+            ], self.a.history())
+
     def test_remove_value(self):
         # check that remove by identity works
         value = object()

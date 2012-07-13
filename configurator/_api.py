@@ -182,13 +182,18 @@ class API(object):
         """
         source = source or get_source()
         if name is not marker:
-            previous = self.by_name.get(name, marker)
-            if previous is not marker and previous.value is not marker:
+            previous = self.by_name.get(name)
+            if previous is None or previous.value is not marker:
                 a = Attribute(
-                    name, marker, 'remove', source, previous.index, previous
+                    name, marker, 'remove', source, 0, previous
                     )
+                if previous is None:
+                    a.index = len(self.by_order)
+                    self.by_order.append(a)
+                else:
+                    a.index = previous.index
+                    self.by_order[previous.index] = a
                 self.by_name[name] = a
-                self.by_order[previous.index] = a
                 self._history.append(a)
         if value is not marker:
             for i, previous in enumerate(self.by_order):
