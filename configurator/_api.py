@@ -2,35 +2,56 @@
 # See license.txt for license details.
 
 from .exceptions import SourceError
+from sys import _getframe
+
 from . import api, marker
 from ._utils import get_source
 
 class Attribute:
     """
-    A container for the value in a configuration.
-    The container records the name the value is associated with, or ``None``
-    if there is no name associated with this value.
-    It also containts a description of the source the value came from,
-    and a string containing the action that caused it to be present
-    and the :class:`Attribute` representing the previous value associated
-    if there was one.
+    A container information about a specific value in a configuration.
 
-    If the ``action`` attribute is ``'removed'``, it indicates that this
-    value has been removed.
+    .. attribute:: name
+
+      The name the value is associated with. ``None`` if this value
+      has no name to identify it.
+      
+    .. attribute:: value
+
+      The value. In the case of the of ``removed`` attributes, this
+      will be the :obj:`marker`.
+      
+    .. attribute:: action
+
+      A string containing the name of the :class:`API` method that
+      caused this value to be present.
+      
+    .. attribute:: source
+
+      A string containing the source location that this value came from.
+      
+    .. attribute:: index
+
+      An implementation detail that should be ignored.
+      
+    .. attribute:: previous
+
+      An :class:`Attribute` instance representing the previous value
+      associated with ``name``. This will be ``None`` if there was no previous
+      value.
+
+    .. note:: You should never instantiate this class yourself.
     """
 
     __slots__ = ('name', 'value', 'action', 'source', 'index', 'previous')
-    
+
     def __init__(self, name, value, action, source, index, previous):
-        """
-        .. note:: You should never instantiate this class yourself.
-        """
         self.name = name
         self.value = value
         self.action = action
         self.source = source
-        self.previous = previous
         self.index = index
+        self.previous = previous
 
     def __repr__(self):
         return 'Attribute'+repr(tuple(
@@ -88,6 +109,34 @@ class API(object):
         self._source = source or get_source()
         self._history = []
         
+    def _attribute(self, name, value, source, previous=None):
+        # avoid import loop
+        from .section import Section
+        if isinstance(value, API):
+            value = value._section
+        if isinstance(value, Section):
+            api(value).name = name
+        action = _getframe(1).f_code.co_name
+        source = source or get_source(3)
+        previous = previous or self.by_name.get(name)
+        if previous is None:
+            index = len(self.by_order)
+        else:
+            if value is marker and previous.value is marker:
+                return
+            index = previous.index
+
+        a = Attribute(name, value, action, source, index, previous)
+        
+        if previous is None:
+            self.by_order.append(a)
+        else:
+            index = previous.index
+            self.by_order[previous.index] = a
+        if name is not None:
+            self.by_name[name] = a
+        self._history.append(a)
+        
     # introspection
 
     def source(self, name=None):
@@ -137,22 +186,7 @@ class API(object):
         The source location this value came from can also be supplied as a
         string. While this is optional, it is strongly recommended.
         """
-        if isinstance(value, API):
-            value = value._section
-        previous = self.by_name.get(name)
-        a = Attribute(name, value, 'set', source or get_source(), 0, previous)
-        if previous is None:
-            a.index = len(self.by_order)
-            self.by_order.append(a)
-        else:
-            a.index = previous.index
-            self.by_order[previous.index] = a
-        self.by_name[name] = a
-        self._history.append(a)
-        # avoid import loop
-        from .section import Section
-        if isinstance(value, Section):
-            api(value).name = name
+        self._attribute(name, value, source)
 
     def append(self, value, source=None):
         """
@@ -161,16 +195,7 @@ class API(object):
         The source location this value came from can also be supplied as a
         string. While this is optional, it is strongly recommended.
         """
-        if isinstance(value, API):
-            value = value._section
-        a = Attribute(
-            None, value, 'append',
-            source or get_source(),
-            len(self.by_order),
-            None
-            )
-        self.by_order.append(a)
-        self._history.append(a)
+        self._attribute(None, value, source)
 
     def remove(self, name=marker, value=marker, source=None):
         """
@@ -180,32 +205,13 @@ class API(object):
         passed. If the latter, all occurences of that value within the
         section will be removed.
         """
-        source = source or get_source()
         if name is not marker:
-            previous = self.by_name.get(name)
-            if previous is None or previous.value is not marker:
-                a = Attribute(
-                    name, marker, 'remove', source, 0, previous
-                    )
-                if previous is None:
-                    a.index = len(self.by_order)
-                    self.by_order.append(a)
-                else:
-                    a.index = previous.index
-                    self.by_order[previous.index] = a
-                self.by_name[name] = a
-                self._history.append(a)
+            self._attribute(name, marker, source)
         if value is not marker:
             for i, previous in enumerate(self.by_order):
                 if previous.value == value:
                     name = previous.name
-                    a = Attribute(
-                        name, marker, 'remove', source, previous.index, previous
-                        )
-                    if name:
-                        self.by_name[name] = a
-                    self.by_order[i] = a
-                    self._history.append(a)
+                    self._attribute(name, marker, source, previous)
 
     # access
 

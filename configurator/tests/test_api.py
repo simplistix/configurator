@@ -64,6 +64,9 @@ class AttributeTests(SourceMixin, TestCase):
             )
 
     def test_ne_index(self):
+        # two identical values may be appended,
+        # they should not be considered to be
+        # the same
         self._check_not_eq(
             Attribute('n', 'v', 'a', 's', 0, None),
             Attribute('n', 'v', 'a', 's', None, 1)
@@ -119,30 +122,30 @@ class APITests(SourceMixin, TestCase):
         # set
         self.a.set('foo', 'value')
         # after
-        compare(Attribute('foo', 'value', 'set', 'default_source', 0, None),
+        compare(Attribute('foo', 'value', 'set', 'default_source3', 0, None),
                 self.a.get('foo'))
-        compare([Attribute('foo', 'value', 'set', 'default_source', 0, None)],
+        compare([Attribute('foo', 'value', 'set', 'default_source3', 0, None)],
                 self.a.items())
-        compare('default_source',
+        compare('default_source3',
                 self.a.source(name='foo'))
-        compare([Attribute('foo', 'value', 'set', 'default_source', 0, None)],
+        compare([Attribute('foo', 'value', 'set', 'default_source3', 0, None)],
                 self.a.history(name='foo'))
-        compare([Attribute('foo', 'value', 'set', 'default_source', 0, None)],
+        compare([Attribute('foo', 'value', 'set', 'default_source3', 0, None)],
                 self.a.history())
 
     def test_set_get_none_value(self):
         # set
         self.a.set('foo', None)
         # after
-        compare(Attribute('foo', None, 'set', 'default_source', 0, None),
+        compare(Attribute('foo', None, 'set', 'default_source3', 0, None),
                 self.a.get('foo'))
-        compare([Attribute('foo', None, 'set', 'default_source', 0, None)],
+        compare([Attribute('foo', None, 'set', 'default_source3', 0, None)],
                 self.a.items())
-        compare('default_source',
+        compare('default_source3',
                 self.a.source(name='foo'))
-        compare([Attribute('foo', None, 'set', 'default_source', 0, None)],
+        compare([Attribute('foo', None, 'set', 'default_source3', 0, None)],
                 self.a.history(name='foo'))
-        compare([Attribute('foo', None, 'set', 'default_source', 0, None)],
+        compare([Attribute('foo', None, 'set', 'default_source3', 0, None)],
                 self.a.history())
 
     def test_set_update_existing(self):
@@ -195,15 +198,15 @@ class APITests(SourceMixin, TestCase):
         self.a.append('v1')
         # after
         items = self.a.items()
-        compare([Attribute(None, 'v1', 'append', 'default_source', 0, None)],
+        compare([Attribute(None, 'v1', 'append', 'default_source3', 0, None)],
                 items)
-        compare('default_source',
+        compare('default_source3',
                 items[0].source)
         compare([
-            Attribute(None, 'v1', 'append', 'default_source', 0, None),
+            Attribute(None, 'v1', 'append', 'default_source3', 0, None),
             ], items[0].history())
         compare([
-            Attribute(None, 'v1', 'append', 'default_source', 0, None),
+            Attribute(None, 'v1', 'append', 'default_source3', 0, None),
             ], self.a.history())
         
     def test_append_append(self):
@@ -264,11 +267,11 @@ class APITests(SourceMixin, TestCase):
                 self.a.source(name='foo'))
         compare([
             Attribute('foo', 'v1', 'set', 's1', 0, None),
-            Attribute('foo', marker, 'remove', 'default_source', 0, None)
+            Attribute('foo', marker, 'remove', 'default_source3', 0, None)
             ], self.a.history(name='foo'))
         compare([
             Attribute('foo', 'v1', 'set', 's1', 0, None),
-            Attribute('foo', marker, 'remove', 'default_source', 0, None)
+            Attribute('foo', marker, 'remove', 'default_source3', 0, None)
             ], self.a.history())
 
     def test_remove_name_not_present(self):
@@ -281,10 +284,10 @@ class APITests(SourceMixin, TestCase):
         compare(None,
                 self.a.source(name='foo'))
         compare([
-            Attribute('foo', marker, 'remove', 'default_source', 0, None)
+            Attribute('foo', marker, 'remove', 'default_source3', 0, None)
             ], self.a.history(name='foo'))
         compare([
-            Attribute('foo', marker, 'remove', 'default_source', 0, None)
+            Attribute('foo', marker, 'remove', 'default_source3', 0, None)
             ], self.a.history())
 
     def test_remove_value(self):
@@ -300,12 +303,12 @@ class APITests(SourceMixin, TestCase):
         compare(None,
                 self.a.source(name='foo'))
         compare([
-            Attribute('foo', value, 'set', 'default_source', 0, None),
-            Attribute('foo', marker, 'remove', 'default_source', 0, None)
+            Attribute('foo', value, 'set', 'default_source3', 0, None),
+            Attribute('foo', marker, 'remove', 'default_source3', 0, None)
             ], self.a.history(name='foo'))
         compare([
-            Attribute('foo', value, 'set', 'default_source', 0, None),
-            Attribute('foo', marker, 'remove', 'default_source', 0, None)
+            Attribute('foo', value, 'set', 'default_source3', 0, None),
+            Attribute('foo', marker, 'remove', 'default_source3', 0, None)
             ], self.a.history())
 
     def test_remove_by_name_previous_remove(self):
@@ -325,18 +328,18 @@ class APITests(SourceMixin, TestCase):
         compare(None,
                 self.a.source(name='bar'))
         compare([
-            Attribute('foo', 'v1', 'set', 'default_source', 0, None),
-            Attribute('foo', marker, 'remove', 'default_source', 0, None)
+            Attribute('foo', 'v1', 'set', 'default_source3', 0, None),
+            Attribute('foo', marker, 'remove', 'default_source3', 0, None)
             ], self.a.history(name='foo'))
         compare([
-            Attribute('bar', 'v2', 'set', 'default_source', 1, None),
-            Attribute('bar', marker, 'remove', 'default_source', 1, None)
+            Attribute('bar', 'v2', 'set', 'default_source3', 1, None),
+            Attribute('bar', marker, 'remove', 'default_source3', 1, None)
             ], self.a.history(name='bar'))
         compare([
-            Attribute('foo', 'v1', 'set', 'default_source', 0, None),
-            Attribute('bar', 'v2', 'set', 'default_source', 1, None),
-            Attribute('foo', marker, 'remove', 'default_source', 0, None),
-            Attribute('bar', marker, 'remove', 'default_source', 1, None),
+            Attribute('foo', 'v1', 'set', 'default_source3', 0, None),
+            Attribute('bar', 'v2', 'set', 'default_source3', 1, None),
+            Attribute('foo', marker, 'remove', 'default_source3', 0, None),
+            Attribute('bar', marker, 'remove', 'default_source3', 1, None),
             ], self.a.history())
 
     def test_remove_nothing_specified(self):
@@ -360,12 +363,12 @@ class APITests(SourceMixin, TestCase):
         compare(None,
                 self.a.source(name='foo'))
         compare([
-            Attribute('foo', 'v1', 'set', 'default_source', 0, None),
-            Attribute('foo', marker, 'remove', 'default_source', 0, None)
+            Attribute('foo', 'v1', 'set', 'default_source3', 0, None),
+            Attribute('foo', marker, 'remove', 'default_source3', 0, None)
             ], self.a.history(name='foo'))
         compare([
-            Attribute('foo', 'v1', 'set', 'default_source', 0, None),
-            Attribute('foo', marker, 'remove', 'default_source', 0, None),
+            Attribute('foo', 'v1', 'set', 'default_source3', 0, None),
+            Attribute('foo', marker, 'remove', 'default_source3', 0, None),
             ], self.a.history())
 
     def test_double_remove_by_value(self):
@@ -381,12 +384,12 @@ class APITests(SourceMixin, TestCase):
         compare(None,
                 self.a.source(name='foo'))
         compare([
-            Attribute('foo', 'v1', 'set', 'default_source', 0, None),
-            Attribute('foo', marker, 'remove', 'default_source', 0, None)
+            Attribute('foo', 'v1', 'set', 'default_source3', 0, None),
+            Attribute('foo', marker, 'remove', 'default_source3', 0, None)
             ], self.a.history(name='foo'))
         compare([
-            Attribute('foo', 'v1', 'set', 'default_source', 0, None),
-            Attribute('foo', marker, 'remove', 'default_source', 0, None),
+            Attribute('foo', 'v1', 'set', 'default_source3', 0, None),
+            Attribute('foo', marker, 'remove', 'default_source3', 0, None),
             ], self.a.history())
     
     def test_remove_value_multiple_match(self):
@@ -473,7 +476,6 @@ class APITests(SourceMixin, TestCase):
             Attribute('bar', 'v4', 'set', 's4', 1, None),
             ], self.a.history(name='bar'))
         compare([
-            # XXX
             Attribute('foo', 'v1', 'set', 's1', 0, None),
             Attribute('bar', 'v2', 'set', 's2', 1, None),
             Attribute(None, 'v3', 'append', 's3', 2, None),
@@ -514,7 +516,7 @@ class APITests(SourceMixin, TestCase):
 
     def test_source_none_specified(self):
         self.a.set('foo', 'bar')
-        compare('default_source', self.a.source('foo'))
+        compare('default_source3', self.a.source('foo'))
     
     def test_set_source_specified(self):
         self.a.set('foo', 'bar', 'line 200 - foo.conf')
