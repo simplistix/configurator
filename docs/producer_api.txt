@@ -1,6 +1,14 @@
 Producer API
 ============
 
+In general, this documentation covers aspects of the
+:mod:`configurator` API that will only be of interest to people
+writing parsers or renderers. 
+
 .. automodule:: configurator._api
  :members:
  :undoc-members:
+
+.. attribute:: configurator.marker
+
+  A marker singleton for defaults and missing values

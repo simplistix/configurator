@@ -1,0 +1,6 @@
+Exceptions
+==========
+
+.. automodule:: configurator.exceptions
+ :members:
+ :undoc-members:

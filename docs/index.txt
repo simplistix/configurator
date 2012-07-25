@@ -32,7 +32,7 @@ API Documentation
 
    consumer_api.txt
    producer_api.txt
-
+   exceptions.txt
 
 Project documentation
 ---------------------

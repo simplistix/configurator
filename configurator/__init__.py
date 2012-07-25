@@ -37,7 +37,7 @@ def parse(source, parser=None, format=None, schema=None, transform=None, process
     raise NotImplementedError()
 
 def api(section):
-    "Get the Configurator API for a particular section"
+    "Get the Configurator :class:`~._api.API` for a particular section"
     return section._api
 
 def process(section):

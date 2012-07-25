@@ -9,7 +9,7 @@ from ._utils import get_source
 
 class Attribute:
     """
-    A container information about a specific value in a configuration.
+    A container for information about a specific value in a configuration.
 
     .. attribute:: name
 
@@ -99,6 +99,9 @@ class API(object):
     The API for storing configuration information in a
     :class:`~configurator.section.Section` and accessing specific
     details about the information stored.
+
+    .. note:: You should never instantiate this class yourself.
+
     """
 
     def __init__(self, section, name, source):
