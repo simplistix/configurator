@@ -3,7 +3,7 @@
 
 from configurator import api, marker
 from configurator._api import API, Attribute
-from configurator.exceptions import SourceError
+from configurator.exceptions import AlreadyProcessed
 from configurator.section import Section
 from unittest import TestCase
 from testfixtures import compare, ShouldRaise
@@ -112,6 +112,11 @@ class APITests(SourceMixin, TestCase):
         self.section = object()
         self.a = API(self.section, 'the name', None)
 
+    called_with = False
+    
+    def _action(self, *args):
+        self.called_with = args
+            
     def test_repr(self):
         compare("<API for Section 'the name' at 0x%x>" % id(self.section),
                 repr(self.a))
@@ -539,6 +544,78 @@ class APITests(SourceMixin, TestCase):
 
     def test_history_empty_section(self):
         compare([], self.a.history())
+
+    # process tests
+    
+    def test_process_empty(self):
+        self.a.process()
+        compare(True, self.a.processed)
+
+    def test_process_simple(self):
+        self.a.action(self._action)
+        self.a.process()
+        compare(True, self.a.processed)
+        compare(self.called_with, (self.section, self.a))
+            
+    def test_process_order(self):
+        call_order = []
+        def action1(section, api):
+            call_order.append('action1')
+        def action2(section, api):
+            call_order.append('action2')
+        self.a.action(action1)
+        self.a.action(action2)
+        self.a.process()
+        compare(True, self.a.processed)
+        compare(['action1', 'action2'], call_order)
+        
+    def test_process_tree(self):
+        call_order = []
+        def action(section, api):
+            call_order.append(api.get('index').value)
+        a = [self.a]
+        self.a.set('index', 0)
+        self.a.action(action)
+        for i in range(1, 8):
+            si = Section()
+            ai = api(si)
+            ai.set('index', i)
+            a.append(ai)
+            ai.action(action)
+            
+        self.a.set('a1', a[1])
+        a[1].set('a2', a[2])
+        a[1].set('a3', a[3])
+        self.a.set('a4', a[4])
+        a[4].set('a5', a[5])
+        a[5].set('a6', a[6])
+        a[4].set('a7', a[7])
+
+        self.a.process()
+        
+        # test leaf-first node traversal
+        compare([2, 3, 1, 6, 5, 7, 4, 0], call_order)
+
+        # test all sections are processed
+        for ai in a:
+            compare(True, ai.processed)
+
+    def test_reprocess_strict(self):
+        self.a.action(self._action)
+        self.a.process()
+        self.called_with = False
+        with ShouldRaise(AlreadyProcessed(
+            "Section 'the name' has already been processed"
+            )):
+            self.a.process()
+        self.assertFalse(self.called_with)
+    
+    def test_reprocess_non_strict(self):
+        self.a.action(self._action)
+        self.a.process()
+        self.called_with = False
+        self.a.process(strict=False)
+        self.assertFalse(self.called_with)
 
 
         s = Section()

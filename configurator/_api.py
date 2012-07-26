@@ -5,6 +5,7 @@ from .exceptions import SourceError
 from sys import _getframe
 
 from . import api, marker
+from .exceptions import AlreadyProcessed
 from ._utils import get_source
 
 class Attribute:
@@ -102,8 +103,14 @@ class API(object):
 
     .. note:: You should never instantiate this class yourself.
 
+    .. attribute:: processed
+
+      A boolean attribute recording whether :meth:`processed` has been called on
+      this :class:`API`.
     """
 
+    processed = False
+    
     def __init__(self, section, name, source):
         self.name = name
         self.by_name = dict()
@@ -111,6 +118,7 @@ class API(object):
         self._section = section
         self._source = source or get_source()
         self._history = []
+        self._actions = []
         
     def __repr__(self):
         return '<API for Section %r at 0x%x>' % (self.name, id(self._section))
@@ -219,6 +227,58 @@ class API(object):
                     name = previous.name
                     self._attribute(name, marker, source, previous)
 
+    def action(self, callable):
+        """
+        Add a callable that will be processed when the :meth:`process` method is
+        called on this :class:`API`. Callables will be called in the order they
+        are actioned and will be called with the :class:`API` instance they were
+        actioned on and the :class:`~configurator.section.Section` associated
+        with that :class:`API` as parameters.
+
+        The object passed must be a callable with the following signature:
+
+        .. code-block:: python
+
+            def my_action(section, api):
+                ...
+                
+        """
+        self._actions.append(callable)
+        
+    def process(self, strict=True):
+        """
+        Process all actions associated with attributes in the section this api
+        is associated with and recursively through all sub-sections within
+        that section.
+
+        Attributes are processed in order and actions are processed in the order
+        they were added. For nested sections, attributes in the deepest sections
+        are processed first with those associated with the root section
+        processed last.
+
+        If a section ends up being processed more than once, an
+        :class:`~configurator.exceptions.AlreadyProcessed` exception will be raised
+        unless a ``strict`` parameter of ``False`` is passed, in which case
+        :class:`Section` instances that have already been processed will be
+        ignored.
+        """
+        # avoid import loop
+        from .section import Section
+
+        if self.processed:
+            if strict:
+                raise AlreadyProcessed(
+                    'Section %r has already been processed' % self.name
+                    )
+            else:
+                return
+        for a in self.items():
+            if isinstance(a.value, Section):
+                api(a.value).process()
+        for action in self._actions:
+            action(self._section, self)
+        self.processed = True
+    
     # access
 
     def items(self):

@@ -146,3 +146,26 @@ Actions
 - order of tree
 - should be able to replace section they're attached to?
 
+When to process?
+================
+
+The idea is that there are three stages:
+
+turning some source into a config
+---------------------------------
+
+Here you just have a nested set of Sections. Values may or may not be
+of the right type, but will most likely just be text strings
+
+applying a schema to a config
+-----------------------------
+
+Once this is done, you'll have a nested set of Sections but the values
+will be of the correct types and the sections will be of a shape that
+matches the schema.
+
+processing the config
+---------------------
+
+At this point, resources will be opened, loggers will be put into
+place, database connections will be opened.
