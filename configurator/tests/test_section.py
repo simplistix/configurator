@@ -18,6 +18,14 @@ class Base(SourceMixin):
 
 class Tests(Base, TestCase):
 
+    # representation
+
+    def test_repr(self):
+        compare('<Section None at 0x%x>' % id(self.s), repr(self.s))
+        
+    def test_str(self):
+        compare('<Section None at 0x%x>' % id(self.s), str(self.s))
+        
     # simple access
     
     def test_dict_get(self):

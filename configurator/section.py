@@ -102,3 +102,6 @@ class Section(object):
     def __iter__(self):
         "This will return the :meth:`items` generator."
         return self.keys()
+
+    def __repr__(self):
+        return '<Section %r at 0x%x>' % (self._api.name, id(self))

@@ -112,6 +112,9 @@ class API(object):
         self._source = source or get_source()
         self._history = []
         
+    def __repr__(self):
+        return '<API for Section %r at 0x%x>' % (self.name, id(self._section))
+    
     def _attribute(self, name, value, source, previous=None):
         # avoid import loop
         from .section import Section

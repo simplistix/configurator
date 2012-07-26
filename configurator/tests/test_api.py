@@ -109,8 +109,17 @@ class APITests(SourceMixin, TestCase):
 
     def setUp(self):
         super(APITests, self).setUp()
-        self.a = API(None, None, None)
+        self.section = object()
+        self.a = API(self.section, 'the name', None)
 
+    def test_repr(self):
+        compare("<API for Section 'the name' at 0x%x>" % id(self.section),
+                repr(self.a))
+
+    def test_str(self):
+        compare("<API for Section 'the name' at 0x%x>" % id(self.section),
+                str(self.a))
+    
     # set tests
     
     def test_set_get_simple(self):
