@@ -1,7 +1,6 @@
 # Copyright (c) 2011-2012 Simplistix Ltd
 # See license.txt for license details.
 
-from .exceptions import SourceError
 from sys import _getframe
 
 from . import api, marker
