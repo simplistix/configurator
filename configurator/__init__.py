@@ -36,6 +36,10 @@ def parse(source, parser=None, format=None, schema=None, transform=None, process
         a.apply_schema(schema)
     raise NotImplementedError()
 
+def render(section, destination=None, renderer=None, format=None, transform=None):
+    "Render a configuration to a path, file object, or return it as a string"
+    raise NotImplementedError()
+          
 def api(section):
     "Get the Configurator :class:`~._api.API` for a particular section"
     return section._api
