@@ -145,7 +145,7 @@ class API(object):
     def source(self, name=None):
         """
         Returns the current source location associated with the name
-        passed in. If no name is passed, the source location where section
+        passed in. If no name is passed, the source location where the section
         associated with this API was first defined will be returned.
 
         If the source location cannot be worked out for any reason,
