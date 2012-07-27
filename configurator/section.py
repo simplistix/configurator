@@ -2,7 +2,6 @@
 # See license.txt for license details.
 
 from . import marker
-from ._api import API
 from ._utils import get_source
 
 class Section(object):
@@ -20,6 +19,8 @@ class Section(object):
         The source location that this section came from can also be supplied as
         a string. While this is optional, it is strongly recommended.
         """
+        # avoid import loop
+        from ._api import API
         self._api = API(self, name, source or get_source())
 
     def __getitem__(self, name):

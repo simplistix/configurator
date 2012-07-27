@@ -4,6 +4,7 @@
 from sys import _getframe
 
 from . import api, marker
+from .section import Section
 from .exceptions import AlreadyProcessed
 from ._utils import get_source
 
@@ -124,7 +125,6 @@ class API(object):
     
     def _attribute(self, name, value, source, previous=None):
         # avoid import loop
-        from .section import Section
         if isinstance(value, API):
             value = value._section
         if isinstance(value, Section):
@@ -261,9 +261,6 @@ class API(object):
         :class:`Section` instances that have already been processed will be
         ignored.
         """
-        # avoid import loop
-        from .section import Section
-
         if self.processed:
             if strict:
                 raise AlreadyProcessed(
