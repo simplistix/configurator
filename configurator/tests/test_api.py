@@ -617,5 +617,57 @@ class APITests(SourceMixin, TestCase):
         self.a.process(strict=False)
         self.assertFalse(self.called_with)
 
+    # clone tests
+    def test_clone_simple(self):
+        # stuff that should be cloned
+        self.a._source = 'foo'
+        self.a.set('x', 1)
+        self.a.set('y', 1)
+        self.a.set('y', 2)
+        self.a.remove('z')
+        def foo(): pass
+        self.a.action(foo)
+        s_ = self.a.clone()
+        self.assertTrue(isinstance(s_, Section))
+        self.assertFalse(s_ is self.section)
+        
+        a_ = api(s_)
+        self.assertFalse(a_.processed)
+        
+        compare(self.a.name, a_.name)
+        compare(self.a.source(), a_.source())
+        compare(self.a.by_name, a_.by_name)
+        self.assertFalse(self.a.by_name is a_.by_name)
+        compare(self.a.by_order, a_.by_order)
+        self.assertFalse(self.a.by_order is a_.by_order)
+        compare(self.a.history(), a_.history())
+        self.assertFalse(self.a._history is a_._history)
+        compare(self.a._actions, a_._actions)
+        self.assertFalse(self.a._actions is a_._actions)
+
+    def test_clone_nested(self):
+        s1 = Section()
+        s1.x = 1
+        s2 = Section()
+        s2.y = 2
+        a2 = api(s2)
+        self.a.set('s1', s1)
+        self.a.set('s2', a2)
+
+        s_ = self.a.clone()
+
+        compare(api(s_.s1).history(), api(s1).history())
+        compare(api(s_.s2).history(), api(s2).history())
+
+        self.assertFalse(s_.s1 is s1)
+        self.assertFalse(s_.s2 is s2)
+    
+    def test_clone_already_processed(self):
+        self.a.process()
+        with ShouldRaise(AlreadyProcessed(
+            "Can't clone 'the name' as it has been processed"
+            )):
+            self.a.clone()
+                         
 
         s = Section()

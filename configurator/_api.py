@@ -275,6 +275,33 @@ class API(object):
             action(self._section, self)
         self.processed = True
     
+    def clone(self):
+        """
+        Return a clone of the :class:`~configurator.section.Section` associated
+        with this :class:`API`. Sub-sections will be cloned but all other values
+        will not be copied in any way.
+
+        Furthermore, since :meth:`process` is likely to introduce values that
+        should not appear in more than one :class:`~configurator.section.Section`,
+        if any section or sub-section has been processed, an
+        :class:`AlreadyProcessed` exception will be raised if an attempt is made
+        to clone them.
+        """
+        if self.processed:
+            raise AlreadyProcessed(
+                    "Can't clone %r as it has been processed" % self.name
+                    )
+        section = Section(self.name, self._source)
+        a = api(section)
+        a.by_name = dict(self.by_name)
+        a.by_order = list(self.by_order)
+        a._history = list(self._history)
+        a._actions = list(self._actions)
+        for a in self.by_order:
+            if isinstance(a.value, Section):
+                a.value = api(a.value).clone()
+        return section
+
     # access
 
     def items(self):
