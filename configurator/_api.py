@@ -144,8 +144,7 @@ class API(object):
         if previous is None:
             self.by_order.append(a)
         else:
-            index = previous.index
-            self.by_order[previous.index] = a
+            self.by_order[index] = a
         if name is not None:
             self.by_name[name] = a
         self._history.append(a)
