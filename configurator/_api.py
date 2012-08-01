@@ -20,7 +20,7 @@ class Attribute:
     .. attribute:: value
 
       The value. In the case of the of ``removed`` attributes, this
-      will be the :obj:`marker`.
+      will be the :obj:`~configurator.marker`.
       
     .. attribute:: action
 
@@ -97,9 +97,8 @@ class Attribute:
     
 class API(object):
     """
-    The API for storing configuration information in a
-    :class:`~configurator.section.Section` and accessing specific
-    details about the information stored.
+    The API for interacting with configuration information in a
+    :class:`~configurator.section.Section`.
 
     .. note:: You should never instantiate this class yourself.
 
