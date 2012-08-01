@@ -536,6 +536,40 @@ class APITests(SourceMixin, TestCase):
         self.a.set('foo', 'bar', 'line 200 - foo.conf')
         compare('line 200 - foo.conf', self.a.source('foo'))
 
+    def test_replace_no_source(self):
+        self.a.replace('foo', 'bar')
+        compare(
+            Attribute('foo', 'bar', 'replace', 'default_source3', 0, None),
+            self.a.get('foo'))
+        compare([
+            Attribute('foo', 'bar', 'replace', 'default_source3', 0, None),
+            ], self.a.items())
+        compare('default_source3',
+                self.a.source(name='foo'))
+        compare([
+            Attribute('foo', 'bar', 'replace', 'default_source3', 0, None),
+            ], self.a.history(name='foo'))
+        compare([
+            Attribute('foo', 'bar', 'replace', 'default_source3', 0, None),
+            ], self.a.history())
+        
+    def test_replace_source(self):
+        self.a.replace('foo', 'bar', 'the source')
+        compare(
+            Attribute('foo', 'bar', 'replace', 'the source', 0, None),
+            self.a.get('foo'))
+        compare([
+            Attribute('foo', 'bar', 'replace', 'the source', 0, None),
+            ], self.a.items())
+        compare('the source',
+                self.a.source(name='foo'))
+        compare([
+            Attribute('foo', 'bar', 'replace', 'the source', 0, None),
+            ], self.a.history(name='foo'))
+        compare([
+            Attribute('foo', 'bar', 'replace', 'the source', 0, None),
+            ], self.a.history())
+        
     # history only tests
     
     def test_history_name_not_present(self):

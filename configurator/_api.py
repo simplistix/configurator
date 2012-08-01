@@ -199,6 +199,18 @@ class API(object):
         """
         self._attribute(name, value, source)
 
+    def replace(self, name, value, source=None):
+        """
+        This method is identical to :meth:`set` except that values set, when
+        merged into another :class:`~configurator.section.Section` using
+        :meth:`merge` will always completely replace the value in that section.
+
+        This is particularly useful when ``value`` is a
+        :class:`~configurator.section.Section` instance as otherwise its
+        contained values would be merged with those in the target section.
+        """
+        self._attribute(name, value, source)
+
     def append(self, value, source=None):
         """
         Append a value to the section associated with this api.
