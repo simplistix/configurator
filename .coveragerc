@@ -1,0 +1,17 @@
+[run]
+branch = True
+parallel = True
+
+[report]
+exclude_lines = 
+  # the original exclude
+  pragma: no cover
+
+  # code executed only when tests fail
+
+[paths]
+src = 
+  ./configurator/
+  C:\Jenkins\workspace\configurator-buildout\*\configurator
+  /var/lib/jenkins/slave/workspace/configurator-buildout/*/configurator
+  /Users/Shared/Jenkins/Home/workspace/configurator-buildout/*/configurator
