@@ -1,7 +1,6 @@
-/.installed.cfg
-/bin/
-/develop-eggs
-/*.egg-info/
-/parts/
-*.pyc
-/docs/_build
+/bin
+/*.egg-info
+/include
+/lib
+.coverage*
+_build/

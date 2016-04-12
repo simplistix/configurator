@@ -1,8 +1,0 @@
-Writing your own writer
-=======================
-
-example
-
-registering with configurator stuff
-
-dealing with things your format can't store

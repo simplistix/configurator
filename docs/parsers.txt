@@ -1,6 +1,0 @@
-Writing your own parser
-=======================
-
-sql example from ideas
-
-registering with configurator stuff
