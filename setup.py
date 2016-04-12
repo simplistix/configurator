@@ -32,12 +32,11 @@ setup(
     ],
     extras_require=dict(
         test=[
-            'testfixtures',
+            'coveralls',
+            'mock',
             'nose',
             'nose-cov',
-            'mock',
-            'coveralls',
-            'mailinglogger',
+            'testfixtures',
             ],
         build=['sphinx', 'pkginfo', 'setuptools-git', 'twine', 'wheel']
     ),
