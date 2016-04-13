@@ -31,9 +31,9 @@ class FunctionalTests(TestCase):
         file: 3
         ''')
 
-        config = Config(path1)
-        config.merge(path2)
-        config.merge(path3)
+        config = Config.from_file(path1)
+        config.merge(Config.from_file(path2))
+        config.merge(Config.from_file(path3))
 
         config.validate(Schema({str: int}))
 
@@ -116,7 +116,8 @@ class FunctionalTests(TestCase):
             config = None
             context = dict(os.environ)
             for path in 'etc/myapp.yml', 'app.yml':
-                layer = Config(yaml.load(env.get_template(path).render(context)))
+                text = env.get_template(path).render(context)
+                layer = Config.from_text(text)
                 if config is None:
                     config = layer
                 else:

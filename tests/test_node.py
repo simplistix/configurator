@@ -19,12 +19,12 @@ class InstantiationTests(TestCase):
         with NamedTemporaryFile() as source:
             source.write('{"x": 1}')
             source.flush()
-            config = Config(source.name)
+            config = Config.from_file(source.name)
         compare(config.x, expected=1)
 
     def test_stream(self):
         with StringIO(u'{"x": 1}') as source:
-            config = Config(source)
+            config = Config.from_stream(source)
         compare(config.x, expected=1)
 
     def test_dict(self):
@@ -38,10 +38,8 @@ class InstantiationTests(TestCase):
         compare(list(config), expected=[1, 2])
 
     def test_int(self):
-        with ShouldRaise(
-            ValueError("source cannot be of type <type 'int'>: 1")
-        ):
-            Config(1)
+        # not very useful...
+        config = Config(1)
 
 
 class MergeTests(TestCase):
@@ -53,28 +51,19 @@ class MergeTests(TestCase):
         config.merge(Config({'x': 1}))
         compare(config.x, 1)
 
-    def test_path(self):
+    def test_non_config(self):
         config = Config()
-        with NamedTemporaryFile() as source:
-            source.write('{"x": 1}')
-            source.flush()
-            config.merge(source.name)
+        with ShouldRaise(TypeError("'foo' is not a Config instance")):
+            config.merge('foo')
+
+    def test_dict_to_dict(self):
+        config = Config()
+        config.merge(Config(dict(x=1)))
         compare(config.x, expected=1)
 
-    def test_stream(self):
-        config = Config()
-        with StringIO(u'{"x": 1}') as source:
-            config.merge(source)
-        compare(config.x, expected=1)
-
-    def test_dict(self):
-        config = Config()
-        config.merge(dict(x=1))
-        compare(config.x, expected=1)
-
-    def test_list(self):
-        config = Config([])
-        config.merge([1, 2])
+    def test_list_to_list(self):
+        config = Config([1, 2])
+        config.merge(Config([3, 4]))
         compare(config[0], expected=1)
-        compare(config[1], expected=2)
-        compare(list(config), expected=[1, 2])
+        compare(config[2], expected=3)
+        compare(list(config), expected=[1, 2, 3, 4])

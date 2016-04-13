@@ -5,25 +5,23 @@ import yaml
 
 class Config(object):
 
-    def _load(self, source):
-        if isinstance(source, basestring):
-            with open(expanduser(source)) as stream:
-                return yaml.load(stream)
-        elif source is None:
-            return {}
-        elif isinstance(source, Config):
-            return source.data
-        elif getattr(source, 'read', None):
-                return yaml.load(source.read())
-        elif isinstance(source, (dict, list)):
-            return source
-        else:
-            raise ValueError(
-                'source cannot be of type {}: {}'.format(type(source), source)
-            )
+    def __init__(self, data=None):
+        if data is None:
+            data = {}
+        self.data = data
 
-    def __init__(self, source=None):
-        self.data = self._load(source)
+    @classmethod
+    def from_text(cls, text):
+        return cls(yaml.load(text))
+
+    @classmethod
+    def from_stream(cls, stream):
+        return cls(yaml.load(stream))
+
+    @classmethod
+    def from_file(cls, path):
+        with open(expanduser(path)) as stream:
+            return cls.from_stream(stream)
 
     def __getattr__(self, name):
         return self.data[name]
@@ -39,7 +37,9 @@ class Config(object):
         schema(self.data)
 
     def merge(self, other):
-        data = self._load(other)
+        if not isinstance(other, Config):
+            raise TypeError('{!r} is not a Config instance'.format(other))
+        data = other.data
         if isinstance(self.data, list):
             self.data.extend(data)
         else:
