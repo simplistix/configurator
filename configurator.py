@@ -11,6 +11,8 @@ class Config(object):
                 return yaml.load(stream)
         elif source is None:
             return {}
+        elif isinstance(source, Config):
+            return source.data
         elif getattr(source, 'read', None):
                 return yaml.load(source.read())
         elif isinstance(source, (dict, list)):

@@ -33,6 +33,7 @@ setup(
     extras_require=dict(
         test=[
             'coveralls',
+            'jinja2',
             'mock',
             'nose',
             'nose-cov',

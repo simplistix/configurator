@@ -1,6 +1,9 @@
+import os
 from unittest import TestCase, SkipTest
 
-from testfixtures import TempDirectory, compare
+import yaml
+from jinja2 import Environment, FileSystemLoader
+from testfixtures import TempDirectory, compare, Replace
 from voluptuous import Schema
 
 from configurator import Config
@@ -92,3 +95,34 @@ class FunctionalTests(TestCase):
     def test_include_dict_duplicate_keys(self):
         raise SkipTest('not yet')
         pass
+
+    def test_templated(self):
+        self.dir.write('etc/myapp.yml', '''
+        {% set base = dict(one=1)%}
+        base_template: {{ base.one }}
+        base_env: {{ MYVAR }}
+        file_template: bad
+        file_env: bad
+        ''')
+
+        self.dir.write('app.yml', '''
+        {% set local=2 %}
+        file_template: {{ local }}
+        file_env: {{ MYVAR }}
+        ''')
+
+        with Replace('os.environ.MYVAR', 'hello', strict=False) as r:
+            env = Environment(loader=FileSystemLoader(self.dir.path))
+            config = None
+            context = dict(os.environ)
+            for path in 'etc/myapp.yml', 'app.yml':
+                layer = Config(yaml.load(env.get_template(path).render(context)))
+                if config is None:
+                    config = layer
+                else:
+                    config.merge(layer)
+
+        compare(config.base_template, expected=1)
+        compare(config.base_env, expected='hello')
+        compare(config.file_template, expected=2)
+        compare(config.file_env, expected='hello')
