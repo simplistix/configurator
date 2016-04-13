@@ -28,13 +28,9 @@ class FunctionalTests(TestCase):
         file: 3
         ''')
 
-        config = None
-        for path in path1, path2, path3:
-            layer = Config(path)
-            if config is None:
-                config = layer
-            else:
-                config.merge(layer)
+        config = Config(path1)
+        config.merge(path2)
+        config.merge(path3)
 
         config.validate(Schema({str: int}))
 
