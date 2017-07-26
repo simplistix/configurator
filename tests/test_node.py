@@ -1,6 +1,6 @@
 from testfixtures import compare, ShouldRaise
 
-from configurator import ConfigNode
+from configurator.node import ConfigNode
 
 
 class TestInstantiation(object):
