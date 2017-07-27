@@ -107,3 +107,32 @@ class TestMergeTests(object):
             return target + source
         config1.merge(config2, mergers=default_mergers+{tuple: concat})
         compare(config1.data, expected={'x': (1, 2, 3, 4)})
+
+
+class TestAddition(object):
+
+    def test_top_level_dict(self):
+        config1 = Config({'foo': 'bar'})
+        config2 = Config({'baz': 'bob'})
+        config3 = config1 + config2
+        compare(config1.data, {'foo': 'bar'})
+        compare(config2.data, {'baz': 'bob'})
+        compare(config3.data, {'foo': 'bar', 'baz': 'bob'})
+
+    def test_top_level_list(self):
+        config1 = Config([1, 2])
+        config2 = Config([3, 4])
+        config3 = config1 + config2
+        compare(config1.data, [1, 2])
+        compare(config2.data, [3, 4])
+        compare(config3.data, [1, 2, 3, 4])
+
+    def test_non_config_rhs(self):
+        config = Config({'foo': 'bar'}) + {'baz': 'bob'}
+        compare(config.data, {'foo': 'bar', 'baz': 'bob'})
+
+    def test_failure(self):
+        with ShouldRaise(TypeError(
+            "Cannot merge <type 'int'> with <type 'dict'>"
+        )):
+            Config({'foo': 'bar'}) + 1

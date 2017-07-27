@@ -10,3 +10,9 @@ class Config(ConfigNode):
         context = MergeContext(mergers)
         if mapping is None:
             self.data = context.merge(source, self.data)
+
+    def __add__(self, other):
+        result = Config(type(self.data)())
+        result.merge(self)
+        result.merge(other)
+        return result
