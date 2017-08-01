@@ -8,7 +8,7 @@ from setuptools import setup, find_packages
 base_dir = os.path.dirname(__file__)
 
 setup(
-    name='archivist',
+    name='configurator',
     version='0.0.dev0',
     author='Chris Withers',
     author_email='chris@simplistix.co.uk',
@@ -39,8 +39,7 @@ setup(
             'coveralls',
             'jinja2',
             'mock',
-            'nose',
-            'nose-cov',
+            'pytest',
             'testfixtures',
             ],
         build=['sphinx', 'pkginfo', 'setuptools-git', 'twine', 'wheel']
