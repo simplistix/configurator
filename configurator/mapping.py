@@ -36,7 +36,7 @@ def parse_text(segment):
     return segment
 
 
-def load(path, data):
+def load(data, path):
     path = parse_text(path)
     for op in path.ops:
         data = op(data)
