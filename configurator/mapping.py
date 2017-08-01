@@ -2,7 +2,7 @@ from functools import partial
 from operator import itemgetter, attrgetter
 
 
-class Path(object):
+class LoadPath(object):
 
     def __init__(self, *ops):
         self.ops = ops
@@ -17,7 +17,7 @@ class Path(object):
         return self._extend(attrgetter(name))
 
 
-source = Path()
+source = LoadPath()
 
 
 def resolve_text_path(text, data):
@@ -32,13 +32,13 @@ def resolve_text_path(text, data):
 
 def parse_text(segment):
     if isinstance(segment, str):
-        segment = Path(partial(resolve_text_path, segment))
+        segment = LoadPath(partial(resolve_text_path, segment))
     return segment
 
 
-def resolve(segment, data):
-    segment = parse_text(segment)
-    for op in segment.ops:
+def load(path, data):
+    path = parse_text(path)
+    for op in path.ops:
         data = op(data)
     return data
 
