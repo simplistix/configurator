@@ -1,7 +1,6 @@
 from testfixtures import compare, ShouldRaise
-
 from configurator import Config, default_mergers
-
+from .compat import type_error
 
 
 class TestNodeBehaviour(object):
@@ -29,8 +28,8 @@ class TestMergeTests(object):
 
     def test_simple_type(self):
         config = Config()
-        with ShouldRaise(TypeError(
-            "Cannot merge <type 'str'> with <type 'dict'>"
+        with ShouldRaise(type_error(
+            "Cannot merge <class 'str'> with <class 'dict'>"
         )):
             config.merge('foo')
 
@@ -47,24 +46,24 @@ class TestMergeTests(object):
     def test_dict_to_list(self):
         config1 = Config([1, 2])
         config2 = Config({'x': 1})
-        with ShouldRaise(TypeError(
-            "Cannot merge <type 'dict'> with <type 'list'>"
+        with ShouldRaise(type_error(
+            "Cannot merge <class 'dict'> with <class 'list'>"
         )):
             config1.merge(config2)
 
     def test_list_to_dict(self):
         config1 = Config({'x': 1})
         config2 = Config([1, 2])
-        with ShouldRaise(TypeError(
-            "Cannot merge <type 'list'> with <type 'dict'>"
+        with ShouldRaise(type_error(
+            "Cannot merge <class 'list'> with <class 'dict'>"
         )):
             config1.merge(config2)
 
     def test_other_to_dict(self):
         config1 = Config(1)
         config2 = Config(1)
-        with ShouldRaise(TypeError(
-            "Cannot merge <type 'int'> with <type 'int'>"
+        with ShouldRaise(type_error(
+            "Cannot merge <class 'int'> with <class 'int'>"
         )):
             config1.merge(config2)
 
@@ -95,8 +94,8 @@ class TestMergeTests(object):
     def test_blank_type_mapping(self):
         config1 = Config({'foo': 'bar'})
         config2 = Config({'baz': 'bob'})
-        with ShouldRaise(TypeError(
-            "Cannot merge <type 'dict'> with <type 'dict'>"
+        with ShouldRaise(type_error(
+            "Cannot merge <class 'dict'> with <class 'dict'>"
         )):
             config2.merge(config1, mergers={})
 
@@ -132,7 +131,7 @@ class TestAddition(object):
         compare(config.data, {'foo': 'bar', 'baz': 'bob'})
 
     def test_failure(self):
-        with ShouldRaise(TypeError(
-            "Cannot merge <type 'int'> with <type 'dict'>"
+        with ShouldRaise(type_error(
+            "Cannot merge <class 'int'> with <class 'dict'>"
         )):
             Config({'foo': 'bar'}) + 1
