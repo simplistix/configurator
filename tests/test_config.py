@@ -107,6 +107,51 @@ class TestMergeTests(object):
         config1.merge(config2, mergers=default_mergers+{tuple: concat})
         compare(config1.data, expected={'x': (1, 2, 3, 4)})
 
+    def test_mapping_paths(self):
+        config = Config({'x': 'old'})
+        data = {'foo': 'bar'}
+        config.merge(data, mapping={
+            source['foo']: target['x']
+        })
+        compare(config.data, expected={'x': 'bar'})
+
+    def test_mapping_strings(self):
+        config = Config({'x': 'old'})
+        data = {'foo': 'bar'}
+        config.merge(data, mapping={
+            'foo': 'x'
+        })
+        compare(config.data, expected={'x': 'bar'})
+
+    def test_mapping_dotted_strings(self):
+        config = Config({'a': {'b': 'old'}})
+        data = {'c': {'d': 'new'}}
+        config.merge(data, mapping={
+            'c.d': 'a.b'
+        })
+        compare(config.data, expected={'a': {'b': 'new'}})
+
+    def test_mapping_type_conversion(self):
+        config = Config({'x': 0})
+        data = {'y': '1'}
+        config.merge(data, mapping={
+            convert(source['y'], int): target['x']
+        })
+        compare(config.data, expected={'x': 1})
+
+    def test_mapping_extensive_conversation(self):
+        config = Config({'a': 0})
+        data = {'x': 2, 'y': -1}
+
+        def best(possible):
+            return max(possible.values())
+
+        config.merge(data, mapping={
+            convert(source, best): target['a']
+        })
+
+        compare(config.data, expected={'a': 2})
+
 
 class TestAddition(object):
 
