@@ -13,7 +13,7 @@ class ItemOp(object):
             data[self.text] = value ={}
             return value
 
-    def set(self, data, value):
+    def set(self, data, value, _):
         data[self.text] = value
 
 
@@ -27,7 +27,7 @@ class AttrOp(object):
 
     ensure = get
 
-    def set(self, data, value):
+    def set(self, data, value, _):
         setattr(data, self.text, value)
 
 
@@ -54,7 +54,7 @@ class TextOp(object):
                 data[self.text] = value = {}
                 return value
 
-    def set(self, data, value):
+    def set(self, data, value, _):
         setitem = getattr(data, '__setitem__', None)
         if setitem is None:
             return setattr(data, self.text, value)
@@ -89,7 +89,7 @@ class InsertOp(object):
         data.insert(self.index, value)
         return value
 
-    def set(self, data, value):
+    def set(self, data, value, _):
         data.insert(self.index, value)
 
 
@@ -103,8 +103,20 @@ class AppendOp(object):
         data.append(value)
         return value
 
-    def set(self, data, value):
+    def set(self, data, value, _):
         data.append(value)
+
+
+class MergeOp(object):
+
+    def get(self, data):
+        raise TypeError('Cannot use merge() in source')
+
+    def ensure(self, data):
+        raise TypeError('merge() must be final operation')
+
+    def set(self, data, value, context):
+        return context.merge(data, value)
 
 
 class Path(object):
@@ -127,6 +139,9 @@ class Path(object):
     def append(self):
         return self._extend(AppendOp())
 
+    def merge(self):
+        return self._extend(MergeOp())
+
 
 def parse_text(segment):
     if isinstance(segment, str):
@@ -146,13 +161,21 @@ def convert(source, callable_):
     return source._extend(ConvertOp(callable_))
 
 
-def store(data, path, value):
+def store(data, path, value, merge_context=None):
     path = parse_text(path)
     if not path.ops:
         raise TypeError('Cannot store at root')
+    stack = [data]
     for op in path.ops[:-1]:
-        data = op.ensure(data)
-    path.ops[-1].set(data, value)
+        stack.append(op.ensure(stack[-1]))
+    data = path.ops[-1].set(stack[-1], value, merge_context)
+    if data is not None:
+        # uh oh, we have to replace the upstream object:
+        if len(stack) < 2:
+            stack[0] = data
+        else:
+            path.ops[-2].set(stack[-2], data, merge_context)
+    return stack[0]
 
 
 source = target = Path()

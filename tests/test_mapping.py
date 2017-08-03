@@ -1,8 +1,8 @@
 from argparse import Namespace
-
 from testfixtures import compare, ShouldRaise
 
 from configurator.mapping import source, load, convert, store, target
+from configurator.merge import MergeContext
 
 
 class TestSource(object):
@@ -54,6 +54,10 @@ class TestSource(object):
     def test_append(self):
         with ShouldRaise(TypeError('Cannot use append() in source')):
             load(None, source.append())
+
+    def test_merge(self):
+        with ShouldRaise(TypeError('Cannot use merge() in source')):
+            load(None, source.merge())
 
 
 class TestTarget(object):
@@ -153,3 +157,18 @@ class TestTarget(object):
         data = '1'
         with ShouldRaise(TypeError('Cannot use convert() as target')):
             store(data, convert(target, int).x, 'y')
+
+    def test_merge(self):
+        data = {'x': 1}
+        data = store(data, target.merge(), {'y': 2}, MergeContext())
+        compare(data, expected={'x': 1, 'y': 2})
+
+    def test_merge_nested(self):
+        data = {'x': {'y': 2}}
+        store(data, target['x'].merge(), {'z': 1}, MergeContext())
+        compare(data, expected={'x': {'y': 2, 'z': 1}})
+
+    def test_ensure_on_merge(self):
+        data = {}
+        with ShouldRaise(TypeError('merge() must be final operation')):
+            store(data, target.merge().x, 'y', MergeContext())

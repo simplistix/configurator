@@ -35,7 +35,7 @@ class MergeContext(object):
 
     mergers = default_mergers
 
-    def __init__(self, mergers):
+    def __init__(self, mergers=None):
         if mergers is not None:
             self.mergers = mergers
 

@@ -1,5 +1,7 @@
-from testfixtures import compare, ShouldRaise
 from configurator import Config, default_mergers
+from configurator.mapping import source, target, convert
+from testfixtures import compare, ShouldRaise
+
 from .compat import type_error
 
 
@@ -151,6 +153,22 @@ class TestMergeTests(object):
         })
 
         compare(config.data, expected={'a': 2})
+
+    def test_mapping_with_merge(self):
+        config = Config({'x': {'y': 1}})
+        data = {'z': 2}
+        config.merge(data, mapping={
+            source: target['x'].merge()
+        })
+        compare(config.data, expected={'x': {'y': 1, 'z': 2}})
+
+    def test_mapping_with_top_level_merge(self):
+        config = Config({'x': {'y': 1}})
+        data = {'z': 2}
+        config.merge(data, mapping={
+            source: target.merge()
+        })
+        compare(config.data, expected={'x': {'y': 1}, 'z': 2})
 
 
 class TestAddition(object):

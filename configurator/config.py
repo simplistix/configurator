@@ -14,7 +14,7 @@ class Config(ConfigNode):
         else:
             for source_path, target_path in mapping.items():
                 value = load(source, source_path)
-                store(self.data, target_path, value)
+                self.data = store(self.data, target_path, value, context)
 
     def __add__(self, other):
         result = Config(type(self.data)())
