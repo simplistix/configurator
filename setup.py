@@ -30,18 +30,16 @@ setup(
     packages=find_packages(),
     zip_safe=False,
     include_package_data=True,
-    install_requires=[
-        'pyyaml',
-        'voluptuous',
-    ],
     extras_require=dict(
         test=[
             'coveralls',
             'jinja2',
             'mock',
             'pytest',
+            'pyyaml',
             'testfixtures',
-            ],
+            'voluptuous',
+        ],
         build=['sphinx', 'pkginfo', 'setuptools-git', 'twine', 'wheel']
     ),
 )
