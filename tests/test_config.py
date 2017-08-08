@@ -1,8 +1,102 @@
+from ast import literal_eval
+from tempfile import NamedTemporaryFile
+
 from configurator import Config, default_mergers
+from configurator.compat import StringIO
+from configurator.config import ParseError
 from configurator.mapping import source, target, convert
-from testfixtures import compare, ShouldRaise
+from testfixtures import compare, ShouldRaise, TempDirectory
 
 from .compat import type_error
+
+
+class TestInstantiation(object):
+
+    def test_empty(self):
+        config = Config()
+        compare(config.data, expected={})
+
+    def test_dict(self):
+        config = Config(dict(x=1))
+        compare(config.x, expected=1)
+
+    def test_list(self):
+        config = Config([1, 2])
+        compare(config[0], expected=1)
+        compare(config[1], expected=2)
+        compare(list(config), expected=[1, 2])
+
+    def test_int(self):
+        # not very useful...
+        config = Config(1)
+        compare(config.data, expected=1)
+
+    def test_text_string_parser(self):
+        config = Config.from_text('{"foo": "bar"}', 'json')
+        compare(config.data, expected={'foo': 'bar'})
+
+    def test_text_callable_parser(self):
+        config = Config.from_text("{'foo': 'bar'}", literal_eval)
+        compare(config.data, expected={'foo': 'bar'})
+
+    def test_text_missing_parser(self):
+        with ShouldRaise(ParseError("No parser found for 'lolwut'")):
+            Config.from_text("{'foo': 'bar'}", 'lolwut')
+
+    def test_path_guess_parser(self):
+        with NamedTemporaryFile(suffix='.json') as source:
+            source.write(b'{"x": 1}')
+            source.flush()
+            config = Config.from_path(source.name)
+        compare(config.x, expected=1)
+
+    def test_path_guess_parser_no_extension(self):
+        with TempDirectory() as dir:
+            path = dir.write('nope', b'{"x": 1}')
+            with ShouldRaise(ParseError("No parser found for None")):
+                Config.from_path(path)
+
+    def test_path_guess_parser_bad_extension(self):
+        with NamedTemporaryFile(suffix='.nope') as source:
+            with ShouldRaise(ParseError("No parser found for 'nope'")):
+                Config.from_path(source.name)
+
+    def test_path_explicit_string_parser(self):
+        with NamedTemporaryFile() as source:
+            source.write(b'{"x": 1}')
+            source.flush()
+            config = Config.from_path(source.name, 'json')
+        compare(config.x, expected=1)
+
+    def test_path_explicit_callable_parser(self):
+        with NamedTemporaryFile() as source:
+            source.write(b'{"x": 1}')
+            source.flush()
+            config = Config.from_path(source.name, literal_eval)
+        compare(config.x, expected=1)
+
+    def test_stream_with_name_guess_parser(self):
+        with NamedTemporaryFile(suffix='.json') as source:
+            source.write(b'{"x": 1}')
+            source.flush()
+            source.seek(0)
+            config = Config.from_stream(source)
+        compare(config.x, expected=1)
+
+    def test_stream_no_name_no_parser(self):
+        source = StringIO(u'{"x": 1}')
+        with ShouldRaise(ParseError("No parser found for None")):
+            Config.from_stream(source)
+
+    def test_stream_string_parser(self):
+        source = StringIO(u'{"x": 1}')
+        config = Config.from_stream(source, 'json')
+        compare(config.x, expected=1)
+
+    def test_stream_callable_parser(self):
+        source = StringIO(u'{"x": 1}')
+        config = Config.from_stream(source, literal_eval)
+        compare(config.x, expected=1)
 
 
 class TestNodeBehaviour(object):
