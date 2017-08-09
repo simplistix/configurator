@@ -1,10 +1,25 @@
+class Sentinel(object):
+
+    def __init__(self, name):
+        self.name = name
+
+    def __repr__(self):
+        return 'Sentinel({!r})'.format(self.name)
+
+
+NOT_PRESENT = Sentinel('NOT_PRESENT')
+
+
 class ItemOp(object):
 
     def __init__(self, text):
         self.text = text
 
     def get(self, data):
-        return data[self.text]
+        try:
+            return data[self.text]
+        except (KeyError, IndexError):
+            return NOT_PRESENT
 
     def ensure(self, data):
         try:
@@ -23,9 +38,10 @@ class AttrOp(object):
         self.text = text
 
     def get(self, data):
-        return getattr(data, self.text)
+        return getattr(data, self.text, NOT_PRESENT)
 
-    ensure = get
+    def ensure(self, data):
+        return getattr(data, self.text)
 
     def set(self, data, value, _):
         setattr(data, self.text, value)
@@ -39,9 +55,12 @@ class TextOp(object):
     def get(self, data):
         getitem = getattr(data, '__getitem__', None)
         if getitem is None:
-            return getattr(data, self.text)
+            return getattr(data, self.text, NOT_PRESENT)
         else:
-            return getitem(self.text)
+            try:
+                return getitem(self.text)
+            except KeyError:
+                return NOT_PRESENT
 
     def ensure(self, data):
         getitem = getattr(data, '__getitem__', None)
@@ -68,10 +87,25 @@ class ConvertOp(object):
         self.callable = callable_
 
     def get(self, data):
+        if data is NOT_PRESENT:
+            return data
         return self.callable(data)
 
     def ensure(self, *args):
         raise TypeError('Cannot use convert() as target')
+
+    set = ensure
+
+
+class RequiredOp(object):
+
+    def get(self, data):
+        if data is NOT_PRESENT:
+            raise Exception('uh oh')
+        return data
+
+    def ensure(self, *args):
+        raise TypeError('Cannot use required() as target')
 
     set = ensure
 
@@ -161,6 +195,11 @@ def convert(source, callable_):
     return source._extend(ConvertOp(callable_))
 
 
+def required(source):
+    source = parse_text(source)
+    return source._extend(RequiredOp())
+
+
 def store(data, path, value, merge_context=None):
     path = parse_text(path)
     if not path.ops:
@@ -168,13 +207,14 @@ def store(data, path, value, merge_context=None):
     stack = [data]
     for op in path.ops[:-1]:
         stack.append(op.ensure(stack[-1]))
-    data = path.ops[-1].set(stack[-1], value, merge_context)
-    if data is not None:
-        # uh oh, we have to replace the upstream object:
-        if len(stack) < 2:
-            stack[0] = data
-        else:
-            path.ops[-2].set(stack[-2], data, merge_context)
+    if value is not NOT_PRESENT:
+        data = path.ops[-1].set(stack[-1], value, merge_context)
+        if data is not None:
+            # uh oh, we have to replace the upstream object:
+            if len(stack) < 2:
+                stack[0] = data
+            else:
+                path.ops[-2].set(stack[-2], data, merge_context)
     return stack[0]
 
 
