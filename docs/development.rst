@@ -35,7 +35,7 @@ Running the tests
 
 Once you've set up a virtualenv, the tests can be run as follows::
 
-  $ bin/nosetests
+  $ bin/pytest
 
 Building the documentation
 --------------------------
@@ -68,7 +68,3 @@ To make a release, just update the version in ``setup.py``,
 update the change log, tag it
 and push to https://github.com/Simplistix/configurator
 and Travis CI should take care of the rest.
-
-Once Travis CI is done, make sure to go to
-https://readthedocs.org/projects/configurator/versions/
-and make sure the new release is marked as an Active Version.
