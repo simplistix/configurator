@@ -2,15 +2,13 @@ from argparse import Namespace
 from testfixtures import compare, ShouldRaise
 
 from configurator.mapping import (
-    source, load, convert, store, target, required, NOT_PRESENT
+    source, load, convert, store, target, required
 )
 from configurator.merge import MergeContext
+from configurator.path import NotPresent
 
 
 class TestSource(object):
-
-    def test_no_present(self):
-        compare(repr(NOT_PRESENT), expected="Sentinel('NOT_PRESENT')")
 
     def test_root(self):
         data = {'foo'}
@@ -34,30 +32,30 @@ class TestSource(object):
 
     def test_getitem_not_present(self):
         data = {}
-        with ShouldRaise(KeyError('foo')):
+        with ShouldRaise(NotPresent('foo')):
             load(data, required(source['foo']))
 
     def test_index_not_present(self):
         data = ['a']
-        with ShouldRaise(IndexError('foo')):
+        with ShouldRaise(NotPresent(1)):
             load(data, required(source[1]))
 
     def test_attr_not_present(self):
         data = Namespace()
-        with ShouldRaise(AttributeError('x')):
+        with ShouldRaise(NotPresent('x')):
            load(data, required(source.x))
 
     def test_getitem_not_present_okay(self):
         data = {}
-        compare(load(data, source['foo']), expected=NOT_PRESENT)
+        compare(load(data, source['foo']), expected=NotPresent('foo'))
 
     def test_index_not_present_okay(self):
         data = ['a']
-        compare(load(data, source[1]), expected=NOT_PRESENT)
+        compare(load(data, source[1]), expected=NotPresent(1))
 
     def test_attr_not_present_okay(self):
         data = Namespace()
-        compare(load(data, source.x), expected=NOT_PRESENT)
+        compare(load(data, source.x), expected=NotPresent('x'))
 
     def test_nested(self):
         data = {'foo': ['a', 'b', Namespace(x=1)]}
@@ -66,7 +64,7 @@ class TestSource(object):
     def test_nested_missing_okay(self):
         data = {'foo': []}
         compare(load(data, source['foo'][2].x),
-                expected=NOT_PRESENT)
+                expected=NotPresent('x'))
 
     def test_string_item(self):
         data = {'foo': 'bar'}
@@ -78,11 +76,11 @@ class TestSource(object):
 
     def test_string_item_not_present(self):
         data = {}
-        compare(load(data, 'foo'), expected=NOT_PRESENT)
+        compare(load(data, 'foo'), expected=NotPresent('foo'))
 
     def test_string_attr_not_present(self):
         data = Namespace()
-        compare(load(data, 'foo'), expected=NOT_PRESENT)
+        compare(load(data, 'foo'), expected=NotPresent('foo'))
 
     def test_string_dotted(self):
         data = {'foo': Namespace(x=1)}
@@ -90,7 +88,7 @@ class TestSource(object):
 
     def test_string_item_not_present_required(self):
         data = {}
-        with ShouldRaise(KeyError('foo')):
+        with ShouldRaise(NotPresent('foo')):
             load(data, required('foo'))
 
     def test_convert(self):
@@ -103,7 +101,7 @@ class TestSource(object):
 
     def test_convert_not_present(self):
         data = {}
-        compare(load(data, convert('x', int)), expected=NOT_PRESENT)
+        compare(load(data, convert('x', int)), expected=NotPresent('x'))
 
     def test_insert(self):
         with ShouldRaise(TypeError('Cannot use insert() in source')):
@@ -133,7 +131,7 @@ class TestTarget(object):
 
     def test_getitem_not_present(self):
         data = {'foo': 'bar'}
-        store(data, target['foo'], NOT_PRESENT)
+        store(data, target['foo'], NotPresent('foo'))
         compare(data, expected={'foo': 'bar'})
 
     def test_index(self):
@@ -143,7 +141,7 @@ class TestTarget(object):
 
     def test_index_not_present(self):
         data = ['a', 'b']
-        store(data, target[1], NOT_PRESENT)
+        store(data, target[1], NotPresent(1))
         compare(data, expected=['a', 'b'])
 
     def test_append(self):
@@ -158,7 +156,7 @@ class TestTarget(object):
 
     def test_append_not_present(self):
         data = []
-        store(data, target.append()['a'], NOT_PRESENT)
+        store(data, target.append()['a'], NotPresent('foo'))
         compare(data, expected=[{}])
 
     def test_insert(self):
@@ -173,7 +171,7 @@ class TestTarget(object):
 
     def test_insert_not_present(self):
         data = []
-        store(data, target.insert(0)['a'], NOT_PRESENT)
+        store(data, target.insert(0)['a'], NotPresent('foo'))
         compare(data, expected=[{}])
 
     def test_attr(self):
@@ -183,7 +181,7 @@ class TestTarget(object):
 
     def test_attr_not_present(self):
         data = Namespace(x=1)
-        store(data, target.x, NOT_PRESENT)
+        store(data, target.x, NotPresent('foo'))
         compare(data.x, 1)
 
     def test_nested(self):
@@ -263,7 +261,7 @@ class TestTarget(object):
 
     def test_merge_not_present(self):
         data = {'x': {'y': 2}}
-        store(data, target['x'].merge(), NOT_PRESENT, MergeContext())
+        store(data, target['x'].merge(), NotPresent('foo'), MergeContext())
         compare(data, expected={'x': {'y': 2}})
 
     def test_ensure_on_merge(self):
