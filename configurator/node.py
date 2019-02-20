@@ -1,5 +1,7 @@
 class ConfigNode(object):
 
+    __slots__ = ('data',)
+
     def __init__(self, data=None):
         if data is None:
             data = {}

@@ -108,6 +108,12 @@ class TestDictAccess(object):
         assert isinstance(obj, ConfigNode)
         compare(obj.data, expected=[1])
 
+    def test_set_item(self):
+        config = ConfigNode()
+        with ShouldRaise(TypeError):
+            config['foo'] = 1
+        compare(config.data, expected={})
+
 
 class TestAttributeAccess(object):
 
@@ -150,3 +156,9 @@ class TestAttributeAccess(object):
         config = ConfigNode(1)
         with ShouldRaise(AttributeError('foo')):
             config.foo
+
+    def test_set_attr(self):
+        config = ConfigNode()
+        with ShouldRaise(AttributeError):
+            config.foo = 1
+        compare(config.data, expected={})
