@@ -1,5 +1,6 @@
 import json
 
+from io import open
 from os.path import expanduser
 from .node import ConfigNode
 from .mapping import load, store
@@ -36,8 +37,8 @@ class Config(ConfigNode):
         return cls.from_text(stream.read(), parser)
 
     @classmethod
-    def from_path(cls, path, parser=None):
-        with open(expanduser(path)) as stream:
+    def from_path(cls, path, parser=None, encoding=None):
+        with open(expanduser(path), encoding=encoding) as stream:
             return cls.from_stream(stream, parser)
 
     def merge(self, source, mapping=None, mergers=None):

@@ -75,6 +75,13 @@ class TestInstantiation(object):
             config = Config.from_path(source.name, literal_eval)
         compare(config.x, expected=1)
 
+    def test_path_with_encoding(self):
+        with NamedTemporaryFile() as source:
+            source.write(b'{"x": "\xa3"}')
+            source.flush()
+            config = Config.from_path(source.name, 'json', encoding='latin-1')
+        compare(config.x, expected=u'\xa3')
+
     def test_stream_with_name_guess_parser(self):
         with NamedTemporaryFile(suffix='.json') as source:
             source.write(b'{"x": 1}')
