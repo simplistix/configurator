@@ -31,12 +31,13 @@ setup(
     zip_safe=False,
     include_package_data=True,
     extras_require=dict(
+        yaml=['pyyaml'],
+        toml=['toml'],
         test=[
-            'coveralls',
             'jinja2',
             'mock',
             'pytest',
-            'pyyaml',
+            'pytest-cov',
             'testfixtures',
             'voluptuous',
         ],

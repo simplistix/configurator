@@ -65,6 +65,6 @@ Making a release
 ----------------
 
 To make a release, just update the version in ``setup.py``,
-update the change log, tag it
+update the change log,
 and push to https://github.com/Simplistix/configurator
-and Travis CI should take care of the rest.
+and Carthorse should take care of the rest.
