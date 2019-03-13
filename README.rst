@@ -10,9 +10,13 @@ configurator
 .. |Docs| image:: https://readthedocs.org/projects/configurator/badge/?version=latest
 .. _Docs: http://configurator.readthedocs.org/en/latest/
 
+This is a Python library for building a configuration store
+from one or more layered configuration sources.
 
-This is a Python library for building a configuration object
-from one or more `YAML`__ files validated using a `schema`__.
+It provides an easy interface for accessing configuration information
+sourced from overlaid config files or mapped in from environment variables
+or command line options.
 
-__ http://pyyaml.org/
-__ https://pypi.python.org/pypi/voluptuous
+Configuration information is also available as nested, simple python data types so that
+you can validate the schema of your configuration using the tool of your choice.
+
