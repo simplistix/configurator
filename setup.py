@@ -1,5 +1,5 @@
 # See license.txt for license details.
-# Copyright (c) 2011-2014 Simplistix Ltd, 2016 Chris Withers
+# Copyright (c) 2011-2014 Simplistix Ltd, 2016-2019 Chris Withers
 
 import os
 
@@ -23,20 +23,20 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
     ],
     packages=find_packages(),
     zip_safe=False,
     include_package_data=True,
     extras_require=dict(
+        yaml=['pyyaml'],
+        toml=['toml'],
         test=[
-            'coveralls',
             'jinja2',
             'mock',
             'pytest',
-            'pyyaml',
+            'pytest-cov',
             'testfixtures',
             'voluptuous',
         ],

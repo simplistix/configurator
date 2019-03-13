@@ -1,0 +1,59 @@
+version: 2.1
+
+orbs:
+  python: cjw296/python-ci@1.2
+
+common: &common
+  jobs:
+
+    - python/pip-run-tests:
+        name: python27
+        image: circleci/python:2.7
+    - python/pip-run-tests:
+        name: python36
+        image: circleci/python:3.6
+    - python/pip-run-tests:
+        name: python37
+        image: circleci/python:3.7
+    - python/pip-run-tests:
+        name: python27-all
+        image: circleci/python:2.7
+        install: "-e .[test,toml,yaml]"
+    - python/pip-run-tests:
+        name: python36-all
+        image: circleci/python:3.6
+        install: "-e .[test,toml,yaml]"
+    - python/pip-run-tests:
+        name: python37-all
+        image: circleci/python:3.7
+        install: "-e .[test,toml,yaml]"
+
+    - python/coverage:
+        name: coverage
+        requires:
+          - python27
+          - python36
+          - python37
+          - python27-all
+          - python36-all
+          - python37-all
+
+    - python/release:
+        name: release
+        requires:
+          - coverage
+        filters:
+          branches:
+            only: master
+
+workflows:
+  push:
+    <<: *common
+  periodic:
+    <<: *common
+    triggers:
+      - schedule:
+          cron: "0 0 * * 5"
+          filters:
+            branches:
+              only: master

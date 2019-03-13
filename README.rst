@@ -1,19 +1,22 @@
-|Travis|_ |Coveralls|_ |Docs|_
 
-.. |Travis| image:: https://api.travis-ci.org/Simplistix/configurator.png?branch=master
-.. _Travis: https://travis-ci.org/Simplistix/configurator
+configurator
+============
 
-.. |Coveralls| image:: https://coveralls.io/repos/Simplistix/configurator/badge.png?branch=master
-.. _Coveralls: https://coveralls.io/r/Simplistix/configurator?branch=master
+|CircleCI|_  |Docs|_
+
+.. |CircleCI| image:: https://circleci.com/gh/Simplistix/configurator/tree/master.svg?style=shield
+.. _CircleCI: https://circleci.com/gh/Simplistix/configurator/tree/master
 
 .. |Docs| image:: https://readthedocs.org/projects/configurator/badge/?version=latest
 .. _Docs: http://configurator.readthedocs.org/en/latest/
 
-configurator
-================
+This is a Python library for building a configuration store
+from one or more layered configuration sources.
 
-This is a Python library for building a configuration object
-from one or more `YAML`__ files validated using a `schema`__.
+It provides an easy interface for accessing configuration information
+sourced from overlaid config files or mapped in from environment variables
+or command line options.
 
-__ http://pyyaml.org/
-__ https://pypi.python.org/pypi/voluptuous
+Configuration information is also available as nested, simple python data types so that
+you can validate the schema of your configuration using the tool of your choice.
+
