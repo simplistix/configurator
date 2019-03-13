@@ -13,7 +13,10 @@ setup(
     author='Chris Withers',
     author_email='chris@simplistix.co.uk',
     license='MIT',
-    description="Tools for YAML-based configuration files.",
+    description=(
+        "A library for building a configuration store "
+        "from one or more layered configuration sources"
+    ),
     long_description=open('README.rst').read(),
     url='https://github.com/Simplistix/configurator',
     classifiers=[
