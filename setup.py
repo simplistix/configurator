@@ -14,7 +14,7 @@ setup(
     author_email='chris@simplistix.co.uk',
     license='MIT',
     description="Tools for YAML-based configuration files.",
-    long_description=open('docs/description.rst').read(),
+    long_description=open('README.rst').read(),
     url='https://github.com/Simplistix/configurator',
     classifiers=[
         # 'Development Status :: 5 - Production/Stable',
