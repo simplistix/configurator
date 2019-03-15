@@ -13,7 +13,9 @@ class Config(ConfigNode):
     parsers = load_parsers()
 
     @classmethod
-    def from_text(cls, text, parser):
+    def from_text(cls, text, parser, encoding='ascii'):
+        if isinstance(text, bytes):
+            text = text.decode(encoding)
         return cls.from_stream(StringIO(text), parser)
 
     @classmethod

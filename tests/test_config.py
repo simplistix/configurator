@@ -39,6 +39,10 @@ class TestInstantiation(object):
         config = Config.from_text('{"foo": "bar"}', 'json')
         compare(config.data, expected={'foo': 'bar'})
 
+    def test_bytes_string_parser(self):
+        config = Config.from_text(b'{"foo": "bar"}', 'json')
+        compare(config.data, expected={'foo': 'bar'})
+
     def test_text_callable_parser(self):
         config = Config.from_text("{'foo': 'bar'}", python_literal)
         compare(config.data, expected={'foo': 'bar'})
