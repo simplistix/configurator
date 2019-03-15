@@ -10,6 +10,10 @@ from testfixtures import compare, ShouldRaise, TempDirectory
 from .compat import type_error
 
 
+def python_literal(stream):
+    return literal_eval(stream.read())
+
+
 class TestInstantiation(object):
 
     def test_empty(self):
@@ -36,7 +40,7 @@ class TestInstantiation(object):
         compare(config.data, expected={'foo': 'bar'})
 
     def test_text_callable_parser(self):
-        config = Config.from_text("{'foo': 'bar'}", literal_eval)
+        config = Config.from_text("{'foo': 'bar'}", python_literal)
         compare(config.data, expected={'foo': 'bar'})
 
     def test_text_missing_parser(self):
@@ -72,7 +76,7 @@ class TestInstantiation(object):
         with NamedTemporaryFile() as source:
             source.write(b'{"x": 1}')
             source.flush()
-            config = Config.from_path(source.name, literal_eval)
+            config = Config.from_path(source.name, python_literal)
         compare(config.x, expected=1)
 
     def test_path_with_encoding(self):
@@ -102,7 +106,7 @@ class TestInstantiation(object):
 
     def test_stream_callable_parser(self):
         source = StringIO(u'{"x": 1}')
-        config = Config.from_stream(source, literal_eval)
+        config = Config.from_stream(source, python_literal)
         compare(config.x, expected=1)
 
 
