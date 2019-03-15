@@ -1,7 +1,8 @@
 Changes
 =======
 
-0.0dev0 (XX YYY ZZZZ)
+0.5.0 (15 Mar 2019)
 ---------------------
 
-- Initial release
+- Initial release with docs.
+
