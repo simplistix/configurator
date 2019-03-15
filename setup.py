@@ -11,7 +11,7 @@ setup(
     name='configurator',
     version='0.5.0',
     author='Chris Withers',
-    author_email='chris@withersorg',
+    author_email='chris@withers.org',
     license='MIT',
     description=(
         "A library for building a configuration store "
