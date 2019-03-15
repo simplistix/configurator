@@ -22,10 +22,10 @@ class TestFunctional(object):
             'special': False
         })
         # from system file:
-        path = dir.write('etc/myapp.json', b'{"special": true}')
+        path = dir.write('etc/myapp.json', '{"special": true}')
         config.merge(Config.from_path(path))
         # from user file:
-        path = dir.write('home/user/myapp.json', b'{"database": {"password": "123"}}')
+        path = dir.write('home/user/myapp.json', '{"database": {"password": "123"}}')
         config.merge(Config.from_path(path))
         # end result:
         compare(config.database.user, expected='foo')
