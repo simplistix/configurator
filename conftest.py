@@ -34,5 +34,5 @@ pytest_collect_file = Sybil(
         CodeBlockParser(['print_function']),
     ],
     pattern='*.rst',
-    fixtures=['fs'],
+    fixtures=['fs', 'replace'],
 ).pytest()
