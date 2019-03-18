@@ -93,3 +93,9 @@ class TestFunctional(object):
         compare(config.base, expected=1)
         compare(config.user, expected=2)
         compare(config.file, expected=3)
+
+
+def test_fake_fs(fs):
+    fs.create_file('/foo/bar.yml', contents='foo: 1\n')
+    config = Config.from_path('/foo/bar.yml')
+    compare(config.foo, expected=1)
