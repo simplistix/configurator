@@ -37,8 +37,10 @@ setup(
         test=[
             'jinja2',
             'mock',
+            'pyfakefs',
             'pytest',
             'pytest-cov',
+            'sybil',
             'testfixtures',
             'voluptuous',
         ],
