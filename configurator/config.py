@@ -1,5 +1,5 @@
 from io import open, StringIO
-from os.path import expanduser
+from os.path import exists, expanduser
 from .node import ConfigNode
 from .mapping import load, store
 from .merge import MergeContext
@@ -35,8 +35,11 @@ class Config(ConfigNode):
         return cls(parser(stream))
 
     @classmethod
-    def from_path(cls, path, parser=None, encoding=None):
-        with open(expanduser(path), encoding=encoding) as stream:
+    def from_path(cls, path, parser=None, encoding=None, optional=False):
+        full_path = expanduser(path)
+        if optional and not exists(full_path):
+            return cls()
+        with open(full_path, encoding=encoding) as stream:
             return cls.from_stream(stream, parser)
 
     def merge(self, source, mapping=None, mergers=None):
