@@ -33,6 +33,12 @@ Quickstart
     replace('sys.argv', ['myapp.py', '--threads', '3'])
     from pprint import pprint
 
+To install the library, go for:
+
+.. code-block:: bash
+
+  pip install configurator[yaml,toml]
+
 Here's how you would handle a layered set of defaults, system-wide config
 and then optional per-user config:
 
