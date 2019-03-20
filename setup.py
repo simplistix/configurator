@@ -44,7 +44,7 @@ setup(
             'testfixtures',
             'voluptuous',
         ],
-        build=['sphinx', 'pkginfo', 'setuptools-git', 'twine', 'wheel']
+        build=['sphinx', 'setuptools-git', 'twine', 'wheel']
     ),
     entry_points={
         'configurator.parser': [
