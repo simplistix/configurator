@@ -162,3 +162,10 @@ class TestAttributeAccess(object):
         with ShouldRaise(AttributeError):
             config.foo = 1
         compare(config.data, expected={})
+
+
+class TestListAccess(object):
+
+    def test_iterate_over_list_of_dicts(self):
+        node = ConfigNode([{'x': 1}])
+        compare(tuple(node)[0], expected=ConfigNode({'x': 2}))
