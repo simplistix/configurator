@@ -3,6 +3,7 @@
 .. toctree::
    :maxdepth: 3
 
+   api.rst
    development.rst
    changes.rst
    license.rst

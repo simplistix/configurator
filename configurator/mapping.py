@@ -9,11 +9,22 @@ def load(data, path):
 
 
 def convert(source, callable_):
+    """
+    A :doc:`mapping <mapping>` operation that indicates the source value
+    should be converted by calling ``callable_`` with the original value
+    and then using that result from that point in the mapping operation
+    onwards.
+    """
     source = parse_text(source)
     return source._extend(ConvertOp(callable_))
 
 
 def required(source):
+    """
+    A :doc:`mapping <mapping>` operation that indicates the source value
+    is required. If it is not present, the exception that occurred when
+    trying to obtain it will be raised.
+    """
     source = parse_text(source)
     return source._extend(RequiredOp())
 

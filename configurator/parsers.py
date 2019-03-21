@@ -3,7 +3,7 @@ from pkg_resources import iter_entry_points
 
 class ParseError(Exception):
     """
-    An exception raised when appropriate parser cannot be found for a config
+    The exception raised when an appropriate parser cannot be found for a config
     stream.
     """
 
