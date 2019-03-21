@@ -3,7 +3,7 @@ from tempfile import NamedTemporaryFile
 
 from configurator import Config, default_mergers
 from io import StringIO
-from configurator.config import ParseError
+from configurator.parsers import ParseError
 from configurator.mapping import source, target, convert
 from testfixtures import compare, ShouldRaise, TempDirectory
 
