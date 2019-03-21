@@ -67,7 +67,7 @@ as follows:
 
     import os
     from argparse import ArgumentParser
-    from configurator.mapping import convert, target, required
+    from configurator import convert, target, required
 
     config.merge(os.environ, {
         convert('MYAPP_THREADS', int): 'threads',
