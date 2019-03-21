@@ -2,7 +2,7 @@ from ast import literal_eval
 from tempfile import NamedTemporaryFile
 
 from configurator import Config, default_mergers
-from configurator.compat import StringIO
+from io import StringIO
 from configurator.config import ParseError
 from configurator.mapping import source, target, convert
 from testfixtures import compare, ShouldRaise, TempDirectory
