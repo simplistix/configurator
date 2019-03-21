@@ -7,14 +7,18 @@ class ConfigNode(object):
             data = {}
         self.data = data
 
+    @classmethod
+    def _wrap(cls, value):
+        if isinstance(value, (dict, list)):
+            value = ConfigNode(value)
+        return value
+
     def _get(self, name):
         try:
             value = self.data[name]
         except TypeError:
             raise KeyError(name)
-        if isinstance(value, (dict, list)):
-            value = ConfigNode(value)
-        return value
+        return self._wrap(value)
 
     def __getattr__(self, name):
         try:
@@ -33,10 +37,8 @@ class ConfigNode(object):
 
     def items(self):
         for key, value in sorted(self.data.items()):
-            if isinstance(value, (dict, list)):
-                value = ConfigNode(value)
-            yield key, value
+            yield key, self._wrap(value)
 
     def __iter__(self):
         for item in self.data:
-            yield item
+            yield self._wrap(item)
