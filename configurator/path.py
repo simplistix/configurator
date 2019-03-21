@@ -16,7 +16,7 @@ class ItemOp(object):
         try:
             return data[self.text]
         except KeyError:
-            data[self.text] = value ={}
+            data[self.text] = value = {}
             return value
 
     def set(self, data, value, _):
@@ -173,6 +173,10 @@ class MergeOp(object):
 
 
 class Path(object):
+    """
+    A generative object used for constructing source or target mappings.
+    See :doc:`mapping` for details.
+    """
 
     def __init__(self, name, *ops):
         self.name = name
@@ -182,18 +186,34 @@ class Path(object):
         return type(self)(self.name, *(self.ops + (op,)))
 
     def __getitem__(self, name):
+        """
+        Indicate that the source or target should be traversed by item access.
+        """
         return self._extend(ItemOp(name))
 
     def __getattr__(self, name):
+        """
+        Indicate that the source or target should be traversed by attribute access.
+        """
         return self._extend(AttrOp(name))
 
     def insert(self, index):
+        """
+        Indicate that a target should be mapped by inserting at the specified
+        index.
+        """
         return self._extend(InsertOp(index))
 
     def append(self):
+        """
+        Indicate that a target should be mapped by appending.
+        """
         return self._extend(AppendOp())
 
     def merge(self):
+        """
+        Indicate that a target should be mapped by merging.
+        """
         return self._extend(MergeOp())
 
     def __str__(self):
