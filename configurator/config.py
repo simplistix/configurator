@@ -3,14 +3,12 @@ from os.path import exists, expanduser
 from .node import ConfigNode
 from .mapping import load, store
 from .merge import MergeContext
-from .parsers import load_parsers
-
-class ParseError(Exception): pass
+from .parsers import Parsers
 
 
 class Config(ConfigNode):
 
-    parsers = load_parsers()
+    parsers = Parsers.from_entrypoints()
 
     @classmethod
     def from_text(cls, text, parser, encoding='ascii'):
@@ -28,10 +26,7 @@ class Config(ConfigNode):
                 except ValueError:
                     pass
         if not callable(parser):
-            try:
-                parser = cls.parsers[parser]
-            except KeyError:
-                raise ParseError('No parser found for {!r}'.format(parser))
+            parser = cls.parsers.get(parser)
         return cls(parser(stream))
 
     @classmethod
