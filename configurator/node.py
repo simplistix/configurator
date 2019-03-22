@@ -1,3 +1,6 @@
+from pprint import pformat
+
+
 class ConfigNode(object):
     """
     A node in the configuration store.
@@ -76,3 +79,11 @@ class ConfigNode(object):
         """
         for item in self.data:
             yield self._wrap(item)
+
+    def __repr__(self):
+        cls = type(self)
+        return '{}.{}({})'.format(
+            cls.__module__,
+            cls.__name__,
+            pformat(self.data)
+        )
