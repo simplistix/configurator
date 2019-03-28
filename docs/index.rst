@@ -3,6 +3,7 @@
 .. toctree::
    :maxdepth: 3
 
+   use.rst
    parsers.rst
    api.rst
    development.rst
