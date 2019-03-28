@@ -1,3 +1,5 @@
+from textwrap import dedent
+
 from testfixtures import compare, ShouldRaise
 
 from configurator.node import ConfigNode
@@ -164,8 +166,19 @@ class TestAttributeAccess(object):
         compare(config.data, expected={})
 
 
-class TestListAccess(object):
+class TestOtherFunctionality(object):
 
     def test_iterate_over_list_of_dicts(self):
         node = ConfigNode([{'x': 1}])
         compare(tuple(node)[0], expected=ConfigNode({'x': 2}))
+
+    def test_repr(self):
+        node = ConfigNode({'some long key': 'some\nvalue',
+                            'another long key': 2,
+                            'yet another long key': 3})
+        compare(repr(node), expected=dedent("""\
+            configurator.node.ConfigNode(
+            {'another long key': 2,
+             'some long key': 'some\\nvalue',
+             'yet another long key': 3}
+            )"""))
