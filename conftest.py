@@ -1,4 +1,5 @@
 import linecache
+import sys
 import tokenize
 from doctest import REPORT_NDIFF, ELLIPSIS
 
@@ -13,6 +14,8 @@ from testfixtures import Replacer
 @pytest.fixture(scope='module')
 def fs():
     pytest.importorskip("yaml")
+    if sys.version_info < (3, 6):
+        pytest.skip('docs are py3 only')
     # We need our own one to have it be module scoped.
     patcher = Patcher()
     patcher.setUp()
