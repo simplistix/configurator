@@ -82,7 +82,7 @@ class ConfigNode(object):
 
     def __repr__(self):
         cls = type(self)
-        pretty = pformat(self.data)
+        pretty = pformat(self.data, width=70)
         if '\n' in pretty:
             pretty = '\n'+pretty+'\n'
         return '{}.{}({})'.format(
