@@ -4,6 +4,7 @@
    :maxdepth: 3
 
    use.rst
+   mapping.rst
    parsers.rst
    api.rst
    development.rst
