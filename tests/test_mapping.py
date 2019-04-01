@@ -35,6 +35,11 @@ class TestSource(object):
         with ShouldRaise(NotPresent('foo')):
             load(data, required(source['foo']))
 
+    def test_getitem_nested_not_present(self):
+        data = {}
+        with ShouldRaise(NotPresent('foo')):
+            load(data, required(source['foo']['bar']))
+
     def test_index_not_present(self):
         data = ['a']
         with ShouldRaise(NotPresent(1)):
@@ -44,6 +49,11 @@ class TestSource(object):
         data = Namespace()
         with ShouldRaise(NotPresent('x')):
            load(data, required(source.x))
+
+    def test_attr_nested_not_present(self):
+        data = Namespace()
+        with ShouldRaise(NotPresent('x')):
+           load(data, required(source.x.y))
 
     def test_getitem_not_present_okay(self):
         data = {}
@@ -64,7 +74,7 @@ class TestSource(object):
     def test_nested_missing_okay(self):
         data = {'foo': []}
         compare(load(data, source['foo'][2].x),
-                expected=NotPresent('x'))
+                expected=NotPresent(2))
 
     def test_string_item(self):
         data = {'foo': 'bar'}
