@@ -4,7 +4,10 @@ from .path import Path, parse_text, ConvertOp, RequiredOp, NotPresent
 def load(data, path):
     path = parse_text(path)
     for op in path.ops:
-        data = op.get(data)
+        if isinstance(data, NotPresent):
+            op.not_present(data)
+        else:
+            data = op.get(data)
     return data
 
 

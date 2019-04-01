@@ -1,7 +1,23 @@
 class NotPresent(Exception): pass
 
 
-class ItemOp(object):
+class Op(object):
+
+    name = 'op'
+
+    def get(self, data):
+        raise TypeError('Cannot use %s() in source' % self.name)
+
+    def ensure(self, *args):
+        raise TypeError('Cannot use %s() as target' % self.name)
+
+    set = ensure
+
+    def not_present(self, data):
+        return data
+
+
+class ItemOp(Op):
 
     def __init__(self, text):
         self.text = text
@@ -26,7 +42,7 @@ class ItemOp(object):
         return '{}[{!r}]'.format(base, self.text)
 
 
-class AttrOp(object):
+class AttrOp(Op):
 
     def __init__(self, text):
         self.text = text
@@ -44,7 +60,7 @@ class AttrOp(object):
         return '{}.{}'.format(base, self.text)
 
 
-class TextOp(object):
+class TextOp(Op):
 
     def __init__(self, text):
         self.text = text
@@ -84,50 +100,42 @@ class TextOp(object):
             return self.text
 
 
-class ConvertOp(object):
+class ConvertOp(Op):
+
+    name = 'convert'
 
     def __init__(self, callable_):
         self.callable = callable_
 
     def get(self, data):
-        if isinstance(data, NotPresent):
-            return data
         return self.callable(data)
-
-    def ensure(self, *args):
-        raise TypeError('Cannot use convert() as target')
-
-    set = ensure
 
     def str(self, base):
         callable_str = getattr(self.callable, '__name__', repr(self.callable))
-        return 'convert({}, {})'.format(base, callable_str)
+        return '{}({}, {})'.format(self.name, base, callable_str)
 
 
-class RequiredOp(object):
+class RequiredOp(Op):
+
+    name = 'required'
 
     def get(self, data):
-        if isinstance(data, NotPresent):
-            raise data
         return data
 
-    def ensure(self, *args):
-        raise TypeError('Cannot use required() as target')
-
-    set = ensure
+    def not_present(self, data):
+        raise data
 
     def str(self, base):
-        return 'required({})'.format(base)
+        return '{}({})'.format(self.name, base)
 
 
-class InsertOp(object):
+class InsertOp(Op):
+
+    name = 'insert'
 
     def __init__(self, index):
         self.index = index
 
-    def get(self, data):
-        raise TypeError('Cannot use insert() in source')
-
     def ensure(self, data):
         value = {}
         data.insert(self.index, value)
@@ -137,13 +145,12 @@ class InsertOp(object):
         data.insert(self.index, value)
 
     def str(self, base):
-        return '{}.insert({!r})'.format(base, self.index)
+        return '{}.{}({!r})'.format(base, self.name, self.index)
 
 
-class AppendOp(object):
+class AppendOp(Op):
 
-    def get(self, data):
-        raise TypeError('Cannot use append() in source')
+    name = 'append'
 
     def ensure(self, data):
         value = {}
@@ -154,13 +161,12 @@ class AppendOp(object):
         data.append(value)
 
     def str(self, base):
-        return '{}.append()'.format(base)
+        return '{}.{}()'.format(base, self.name)
 
 
-class MergeOp(object):
+class MergeOp(Op):
 
-    def get(self, data):
-        raise TypeError('Cannot use merge() in source')
+    name = 'merge'
 
     def ensure(self, data):
         raise TypeError('merge() must be final operation')
@@ -169,7 +175,7 @@ class MergeOp(object):
         return context.merge(data, value)
 
     def str(self, base):
-        return '{}.merge()'.format(base)
+        return '{}.{}()'.format(base, self.name)
 
 
 class Path(object):
