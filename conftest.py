@@ -12,17 +12,25 @@ from testfixtures import Replacer
 
 
 @pytest.fixture(scope='module')
-def fs():
+def fs_state():
     pytest.importorskip("yaml")
     if sys.version_info < (3, 6):
         pytest.skip('docs are py3 only')
-    # We need our own one to have it be module scoped.
     patcher = Patcher()
     patcher.setUp()
-    linecache.open = patcher.original_open
-    tokenize._builtin_open = patcher.original_open
-    yield patcher.fs
+    patcher.pause()
+    yield patcher
     patcher.tearDown()
+
+
+@pytest.fixture()
+def fs(fs_state):
+    # We need our own one to have state across sections in documents.
+    fs_state.resume()
+    linecache.open = fs_state.original_open
+    tokenize._builtin_open = fs_state.original_open
+    yield fs_state.fs
+    fs_state.pause()
 
 
 @pytest.fixture(scope='module')
