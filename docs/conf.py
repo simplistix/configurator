@@ -23,7 +23,7 @@ exclude_patterns = [
 pygments_style = 'sphinx'
 
 # Options for HTML output
-html_theme = 'default' if on_rtd else 'classic'
+html_theme = 'default' if on_rtd else 'sphinx_rtd_theme'
 htmlhelp_basename = project+'doc'
 
 # Options for LaTeX output
