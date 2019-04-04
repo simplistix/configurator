@@ -129,6 +129,17 @@ class RequiredOp(Op):
         return '{}({})'.format(self.name, base)
 
 
+class IfSuppliedOp(Op):
+
+    name = 'if_supplied'
+
+    def get(self, data):
+        return data or NotPresent(data)
+
+    def str(self, base):
+        return '{}({})'.format(self.name, base)
+
+
 class InsertOp(Op):
 
     name = 'insert'

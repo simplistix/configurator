@@ -138,6 +138,9 @@ Operations
 
 Some behaviour is better expressed as a function operating on a mapping path.
 
+required
+^^^^^^^^
+
 The default handling of mappings where the source-side is not present is to do nothing,
 rather than raising an exception:
 
@@ -152,6 +155,9 @@ Traceback (most recent call last):
 ...
 configurator.path.NotPresent: foo
 
+convert
+^^^^^^^
+
 By default, configurator expects data to be of the correct type, with conversion
 normally being handled be the parser. Some mapping sources, however, may provide
 strings where numbers or booleans are wanted. The :func:`convert` operation can be
@@ -162,6 +168,21 @@ used to deal with this:
 >>> config.merge(source={'MY_ENV_VAR': '2'}, mapping={convert('MY_ENV_VAR', int): 'foo'})
 >>> config
 configurator.config.Config({'foo': 2})
+
+if_supplied
+^^^^^^^^^^^
+
+Some configuration sources provide defaults such as ``None`` or empty strings that are unhelpful
+when mapping into a :class:`Config`. In these cases, the mapping can be configured to treat values
+as not present if they match Python's definitoon of "false" by using the :func:`if_supplied`
+operation:
+
+>>> from argparse import Namespace
+>>> from configurator import if_supplied
+>>> config = Config()
+>>> config.merge(source=Namespace(my_option=None), mapping={if_supplied('my_option'): 'some_key'})
+>>> config
+configurator.config.Config({})
 
 Merging
 --------
