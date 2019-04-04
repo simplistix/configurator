@@ -12,6 +12,8 @@ configurator
 
 This is a Python library for building a configuration store
 from one or more layered configuration sources.
+These are most commonly files, with yaml, toml and json support included
+and other formats easily supported with plugins.
 
 It provides an easy interface for accessing configuration information
 sourced from overlaid config files or mapped in from environment variables
