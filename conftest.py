@@ -8,15 +8,15 @@ from pyfakefs.fake_filesystem_unittest import Patcher
 from sybil import Sybil
 from sybil.parsers.doctest import DocTestParser, FIX_BYTE_UNICODE_REPR
 from sybil.parsers.codeblock import CodeBlockParser
-from testfixtures import Replacer
-
+from testfixtures import Replacer, TempDirectory
+from testfixtures.sybil import FileParser
 
 @pytest.fixture(scope='module')
 def fs_state():
     pytest.importorskip("yaml")
     if sys.version_info < (3, 6):
         pytest.skip('docs are py3 only')
-    patcher = Patcher()
+    patcher = Patcher(additional_skip_names=['expanduser'])
     patcher.setUp()
     patcher.pause()
     yield patcher
@@ -33,6 +33,12 @@ def fs(fs_state):
     fs_state.pause()
 
 
+@pytest.fixture()
+def tempdir(fs):
+    with TempDirectory(path='/') as d:
+        yield d
+
+
 @pytest.fixture(scope='module')
 def replace():
     with Replacer() as r:
@@ -43,7 +49,8 @@ pytest_collect_file = Sybil(
     parsers=[
         DocTestParser(optionflags=REPORT_NDIFF|ELLIPSIS|FIX_BYTE_UNICODE_REPR),
         CodeBlockParser(['print_function']),
+        FileParser('tempdir')
     ],
     pattern='*.rst',
-    fixtures=['fs', 'replace'],
+    fixtures=['fs', 'replace', 'tempdir'],
 ).pytest()

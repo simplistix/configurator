@@ -5,6 +5,7 @@
 
    use.rst
    mapping.rst
+   patterns.rst
    parsers.rst
    api.rst
    development.rst
