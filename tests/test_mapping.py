@@ -1,9 +1,7 @@
 from argparse import Namespace
 from testfixtures import compare, ShouldRaise
 
-from configurator.mapping import (
-    source, load, convert, store, target, required
-)
+from configurator.mapping import source, load, convert, store, target, required, if_supplied
 from configurator.merge import MergeContext
 from configurator.path import NotPresent
 
@@ -124,6 +122,26 @@ class TestSource(object):
     def test_merge(self):
         with ShouldRaise(TypeError('Cannot use merge() in source')):
             load(None, source.merge())
+
+    def test_if_supplied_truthy(self):
+        data = Namespace(x='1')
+        compare(load(data, if_supplied(source.x)), expected='1')
+
+    def test_if_supplied_falsy(self):
+        data = Namespace(x=None)
+        compare(load(data, if_supplied(source.x)), expected=NotPresent(None))
+
+    def test_if_supplied_string(self):
+        data = Namespace(x='1')
+        compare(load(data, if_supplied('x')), expected='1')
+
+    def test_if_supplied_required_falsy(self):
+        data = Namespace(x=None)
+        with ShouldRaise(NotPresent(None)):
+            load(data, required(if_supplied(source.x)))
+
+    def test_if_supplied_str(self):
+        compare(str(if_supplied(source.x)), expected='if_supplied(source.x)')
 
 
 class TestTarget(object):
@@ -258,6 +276,16 @@ class TestTarget(object):
         data = '1'
         with ShouldRaise(TypeError('Cannot use required() as target')):
             store(data, required(target).x, 'y')
+
+    def test_set_on_supplied(self):
+        data = '1'
+        with ShouldRaise(TypeError('Cannot use if_supplied() as target')):
+            store(data, if_supplied(target), 'y')
+
+    def test_ensure_on_supplied(self):
+        data = '1'
+        with ShouldRaise(TypeError('Cannot use if_supplied() as target')):
+            store(data, if_supplied(target).x, 'y')
 
     def test_merge(self):
         data = {'x': 1}

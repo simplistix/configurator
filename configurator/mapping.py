@@ -1,4 +1,4 @@
-from .path import Path, parse_text, ConvertOp, RequiredOp, NotPresent
+from .path import Path, parse_text, ConvertOp, RequiredOp, NotPresent, IfSuppliedOp
 
 
 def load(data, path):
@@ -30,6 +30,16 @@ def required(source):
     """
     source = parse_text(source)
     return source._extend(RequiredOp())
+
+
+def if_supplied(source):
+    """
+    A :doc:`mapping <mapping>` operation that indicates the source value
+    should be treated as not present if its value matches Python's definition
+    of "false". This includes empty strings, zero, ``False`` and ``None``.
+    """
+    source = parse_text(source)
+    return source._extend(IfSuppliedOp())
 
 
 def store(data, path, value, merge_context=None):
