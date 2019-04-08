@@ -28,7 +28,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
     ],
-    packages=find_packages(),
+    packages=find_packages(exclude=["tests"]),
     zip_safe=False,
     include_package_data=True,
     extras_require=dict(
