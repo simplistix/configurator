@@ -3,6 +3,13 @@
 Changes
 =======
 
+1.2.0 (29 May 2019)
+-------------------
+
+- Enable the context manager returned by :meth:`Config.push` to return
+  the state of a global config object to what it was before :meth:`~Config.push`
+  was called.
+
 1.1.0 (29 May 2019)
 -------------------
 
