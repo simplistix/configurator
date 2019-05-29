@@ -114,6 +114,53 @@ class TestInstantiation(object):
         compare(config.x, expected=1)
 
 
+class TestPushPop(object):
+
+    def test_push_pop(self):
+        config = Config({'x': 1, 'y': 2})
+        compare(config.x, expected=1)
+        compare(config.y, expected=2)
+        config.push(Config({'x': 3}))
+        compare(config.x, expected=3)
+        compare(config.y, expected=2)
+        config.pop()
+        compare(config.x, expected=1)
+        compare(config.y, expected=2)
+
+    def test_push_empty(self):
+        config = Config({'x': 1, 'y': 2})
+        compare(config.x, expected=1)
+        compare(config.y, expected=2)
+        config.push(Config({'x': 3}), empty=True)
+        compare(config.x, expected=3)
+        with ShouldRaise(AttributeError('y')):
+            config.y
+        config.pop()
+        compare(config.x, expected=1)
+        compare(config.y, expected=2)
+
+    def test_push_non_config(self):
+        config = Config({'x': 1})
+        compare(config.x, expected=1)
+        config.push({'x': 2})
+        compare(config.x, expected=2)
+
+    def test_pop_without_push(self):
+        config = Config({'x': 1, 'y': 2})
+        with ShouldRaise(IndexError('pop from empty list')):
+            config.pop()
+
+    def test_context_manager_push(self):
+        config = Config({'x': 1, 'y': 2})
+        compare(config.x, expected=1)
+        compare(config.y, expected=2)
+        with config.push(Config({'x': 3})):
+            compare(config.x, expected=3)
+            compare(config.y, expected=2)
+        compare(config.x, expected=1)
+        compare(config.y, expected=2)
+
+
 class TestNodeBehaviour(object):
 
     def test_dict_access(self):

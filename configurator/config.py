@@ -11,7 +11,13 @@ class Config(ConfigNode):
     The root of the configuration store.
     """
 
+    __slots__ = ('data', '_previous')
+
     parsers = Parsers.from_entrypoints()
+
+    def __init__(self, data=None):
+        super(Config, self).__init__(data)
+        self._previous = []
 
     @classmethod
     def from_text(cls, text, parser, encoding='ascii'):
@@ -89,3 +95,39 @@ class Config(ConfigNode):
         result.merge(self)
         result.merge(other)
         return result
+
+    def push(self, config, empty=False):
+        """
+        Push the provided ``config`` onto this instance, replacing the data
+        of this :class:`Config`.
+
+        If ``empty`` is ``False``, this is done by merging the existing
+        contents with the provided ``config``, giving precedence to the
+        ``config`` passed in.
+
+        If ``empty`` is ``True``, then the provided ``config`` is used to
+        entirely replace the data of this :class:`Config`.
+
+        ``config`` may either be a :class:`Config` instance or anything
+        that would be passed to the :class:`Config` constructor.
+        """
+        if empty:
+            base = Config()
+        else:
+            base = self
+        self._previous.append(self.data)
+        self.data = (base + config).data
+        return self
+
+    def pop(self):
+        """
+        Pop off the top-most data that was last :meth:`pushed <push>`
+        on to this :class:`Config`.
+        """
+        self.data = self._previous.pop()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.pop()

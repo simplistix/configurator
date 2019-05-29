@@ -328,3 +328,74 @@ Combining the above function and configuration file might result in:
 >>> build_app('myapp.yml')
 TheFramework running MyApp({'enabled': True, 'threads': 1})
 logging: {'console_level': False, 'file_level': 'warning'}>
+
+Global configuration object
+---------------------------
+
+.. py:currentmodule:: configurator
+
+.. invisible-code-block: python
+
+    from mock import Mock
+    import pytest
+
+    app = Mock()
+    app.view.return_value = lambda func: func
+    app.configurer = lambda func: func
+    tempdir.write('myapp.yml', b'{"db_url": "..."}')
+
+For applications where there is no sensible path for passing a configuration
+object to the various parts that may need to access it, it can make sense to have a global
+:class:`Config` that has configuration pushed on to it at a different time to its creation.
+
+You may instantiate the :class:`Config` in a module global scope, potentially with
+some defaults:
+
+.. code-block:: python
+
+    from configurator import Config
+
+    config = Config({'default_deny': True})
+
+You may then have a web layer that uses the common pattern of decorated functions to
+map URLs to the code that renders them, but that also need access to configuration information:
+
+.. code-block:: python
+
+    @app.view('/')
+    def root(request):
+        db = connect(config.db_url)
+        if config.default_deny and not db.query(Roles).filter_by(user=request.user):
+            raise HttpForbidden()
+        ...
+
+That same web layer may also have a hook or event that lets you configure the application during
+startup:
+
+.. code-block:: python
+
+    @app.configurer
+    def configure():
+        config.push(Config.from_path('myapp.yml'))
+
+
+.. invisible-code-block: python
+
+    configure()
+    connect = Mock()
+    Roles = Mock()
+    root(Mock())
+
+Now, when testing, you can have a fixture that pushes configuration data suitable
+for use during automated tests:
+
+.. code-block:: python
+
+    @pytest.fixture()
+    def configured():
+        with config.push({'db_url': 'postgresql://localhost/test'}):
+            yield config
+
+.. invisible-code-block: python
+
+    assert tuple(configured.__wrapped__())[0] is config

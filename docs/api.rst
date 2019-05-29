@@ -6,7 +6,7 @@ API Reference
    :member-order: bysource
    :show-inheritance:
    :special-members:
-   :exclude-members: __weakref__
+   :exclude-members: __weakref__, __init__
 
 .. attribute:: source
 
