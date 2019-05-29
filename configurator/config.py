@@ -1,3 +1,4 @@
+from copy import deepcopy
 from io import open, StringIO
 from os.path import exists, expanduser
 from .node import ConfigNode
@@ -96,7 +97,7 @@ class Config(ConfigNode):
         result.merge(other)
         return result
 
-    def push(self, config, empty=False):
+    def push(self, config=None, empty=False):
         """
         Push the provided ``config`` onto this instance, replacing the data
         of this :class:`Config`.
@@ -110,14 +111,23 @@ class Config(ConfigNode):
 
         ``config`` may either be a :class:`Config` instance or anything
         that would be passed to the :class:`Config` constructor.
+
+        This method returns a context manager that, when its context is left,
+        restores the configuration data used to whatever was in place
+        before :meth:`push` was called, regardless of any further :meth:`push`
+        or meth:`merge` calls, or other modifications to :attr:`data` on this
+        :class:`Config` object.
         """
         if empty:
             base = Config()
         else:
-            base = self
+            base = Config(deepcopy(self.data))
+        if not isinstance(config, Config):
+            config = Config(config)
         self._previous.append(self.data)
+        context = PushContext(self, self.data)
         self.data = (base + config).data
-        return self
+        return context
 
     def pop(self):
         """
@@ -126,8 +136,16 @@ class Config(ConfigNode):
         """
         self.data = self._previous.pop()
 
+
+class PushContext(object):
+
+    def __init__(self, config, data):
+        self.config = config
+        self.data = data
+
     def __enter__(self):
-        return self
+        return self.config
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self.pop()
+        while self.config.data is not self.data:
+            self.config.pop()

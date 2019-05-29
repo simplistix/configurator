@@ -160,6 +160,32 @@ class TestPushPop(object):
         compare(config.x, expected=1)
         compare(config.y, expected=2)
 
+    def test_context_manager_push_pathological(self):
+        config = Config({'x': 1, 'y': 2})
+        compare(config.x, expected=1)
+        compare(config.y, expected=2)
+        with config.push():
+            config.data['a'] = 5
+            config.push({'x': 3})
+            config.push({'z': 4})
+            compare(config.a, expected=5)
+            compare(config.x, expected=3)
+            compare(config.y, expected=2)
+            compare(config.z, expected=4)
+        compare(config.x, expected=1)
+        compare(config.y, expected=2)
+        with ShouldRaise(AttributeError('a')):
+            config.a
+        with ShouldRaise(AttributeError('z')):
+            config.z
+
+    def test_context_manager_push_deep(self):
+        config = Config({'x': {'y': 'z'}})
+        with config.push():
+            config.data['x']['y'] = 'a'
+            compare(config.x.y, expected='a')
+        compare(config.x.y, expected='z')
+
 
 class TestNodeBehaviour(object):
 
