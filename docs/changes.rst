@@ -1,5 +1,13 @@
+.. py:currentmodule:: configurator
+
 Changes
 =======
+
+1.1.0 (29 May 2019)
+-------------------
+
+- Add support for :meth:`pushing <Config.push>` and :meth:`popping <Config.pop>`
+  config data onto a global :class:`Config`.
 
 1.0.0 (4 Apr 2019)
 ------------------
