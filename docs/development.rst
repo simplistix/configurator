@@ -3,11 +3,6 @@ Development
 
 .. highlight:: bash
 
-This package is developed using continuous integration which can be
-found here:
-
-https://travis-ci.org/Simplistix/configurator
-
 The latest development version of the documentation can be found here:
 
 http://configurator.readthedocs.org/en/latest/
