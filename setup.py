@@ -40,7 +40,6 @@ setup(
             'pyfakefs',
             'pytest',
             'pytest-cov',
-            'requests',
             'sybil',
             'testfixtures',
             'voluptuous',
