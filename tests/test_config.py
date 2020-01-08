@@ -1,11 +1,13 @@
 from ast import literal_eval
 from tempfile import NamedTemporaryFile
 
+import pytest
+
 from configurator import Config, default_mergers
 from io import StringIO
 from configurator.parsers import ParseError
 from configurator.mapping import source, target, convert
-from testfixtures import compare, ShouldRaise, TempDirectory
+from testfixtures import compare, ShouldRaise, TempDirectory, Replace
 
 from .compat import type_error
 
@@ -112,6 +114,55 @@ class TestInstantiation(object):
         source = StringIO(u'{"x": 1}')
         config = Config.from_stream(source, python_literal)
         compare(config.x, expected=1)
+
+    @pytest.fixture()
+    def env(self):
+        env = {}
+        with Replace('os.environ', env):
+            yield env
+
+    def test_from_env_single_prefix(self, env):
+        env['FOO_BAR'] = 'one'
+        env['FOO_BAZ'] = 'two'
+        config = Config.from_env(prefix='FOO_')
+        compare(config.data, expected={'bar': 'one', 'baz': 'two'})
+
+    def test_from_env_multiple_prefix(self, env):
+        env['FOO_BAR'] = 'one'
+        env['BOB_BAR'] = 'two'
+        config = Config.from_env({'FOO_': 'foo', 'BOB_': 'bob'})
+        compare(config.data, expected={
+            'foo': {'bar': 'one'},
+            'bob': {'bar': 'two'}
+        })
+
+    def test_from_env_target_dotted_string(self, env):
+        env['FOO_BAR'] = 'one'
+        env['FOO_BAZ'] = 'two'
+        config = Config.from_env(prefix={'FOO_': 'a.b.c'})
+        compare(config.data, expected={
+            'a': {'b': {'c': {'bar': 'one', 'baz': 'two'}}}
+        })
+
+    def test_from_env_target_path(self, env):
+        env['FOO_BAR'] = 'one'
+        env['FOO_BAZ'] = 'two'
+        config = Config.from_env(prefix={'FOO_': target['a']})
+        compare(config.data, expected={
+            'a': {'bar': 'one', 'baz': 'two'}
+        })
+
+    def test_from_env_type_suffix(self, env):
+        env['FOO_BAR'] = '1'
+        env['FOO_BAZ'] = '2'
+        config = Config.from_env(prefix='FOO_', types={'_BAZ': int})
+        compare(config.data, expected={'bar': '1', 'baz': 2})
+
+    def test_from_env_value_is_empty_string(self, env):
+        env['FOO_BAR'] = ''
+        env['FOO_BAZ'] = ''
+        config = Config.from_env(prefix='FOO_', types={'_BAZ': int})
+        compare(config.data, expected={})
 
 
 class TestPushPop(object):
