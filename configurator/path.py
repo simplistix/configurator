@@ -240,7 +240,7 @@ class Path(object):
         return str
 
     def __repr__(self):
-        return 'Path({!r})'.format(self.name)
+        return 'Path:{}'.format(str(self))
 
 
 def parse_text(segment):
