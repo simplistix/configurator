@@ -7,12 +7,19 @@ from configurator.path import parse_text
 class TestPaths(object):
 
     def test_repr(self):
-        compare(repr(source), expected="Path('source')")
-        compare(repr(target), expected="Path('target')")
+        compare(repr(source), expected="Path:source")
+        compare(repr(target), expected="Path:target")
 
     def test_str(self):
         compare(str(source), expected="source")
         compare(str(target), expected="target")
+
+    def test_repr_nested(self):
+        compare(repr(
+            required(convert(source['foo'].y, int)).insert(0).append().merge()
+        ), expected=(
+            "Path:required(convert(source['foo'].y, int)).insert(0).append().merge()"
+        ))
 
     def test_str_nested(self):
         compare(str(
