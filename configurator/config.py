@@ -1,10 +1,13 @@
+import os
 from copy import deepcopy
 from io import open, StringIO
 from os.path import exists, expanduser
-from .node import ConfigNode
-from .mapping import load, store
+
+from .mapping import load, store, target, convert, if_supplied
 from .merge import MergeContext
+from .node import ConfigNode
 from .parsers import Parsers
+from .path import parse_text
 
 
 class Config(ConfigNode):
@@ -68,6 +71,28 @@ class Config(ConfigNode):
             return cls()
         with open(full_path, encoding=encoding) as stream:
             return cls.from_stream(stream, parser)
+
+    @classmethod
+    def from_env(cls, prefix, types=None):
+        if not isinstance(prefix, dict):
+            prefixes = {prefix: target}
+        else:
+            prefixes = prefix
+        mapping = {}
+        for key, value in os.environ.items():
+            for prefix, prefix_target in prefixes.items():
+                if key.startswith(prefix):
+                    prefix_source = if_supplied(key)
+                    prefix_target = parse_text(prefix_target)[key[len(prefix):].lower()]
+                    if types is not None:
+                        for suffix, type_ in types.items():
+                            if key.endswith(suffix):
+                                prefix_source = convert(prefix_source, type_)
+                    mapping[prefix_source] = prefix_target
+
+        config = cls()
+        config.merge(os.environ, mapping)
+        return config
 
     def merge(self, source, mapping=None, mergers=None):
         """
