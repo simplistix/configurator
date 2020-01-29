@@ -3,6 +3,12 @@
 Changes
 =======
 
+1.3.0 (29 Jan 2020)
+-------------------
+
+- Add :meth:`Config.from_env` class method to help with extacting
+  large numbers of environment variables into configuration.
+
 1.2.0 (29 May 2019)
 -------------------
 
