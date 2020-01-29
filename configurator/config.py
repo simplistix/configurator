@@ -74,6 +74,16 @@ class Config(ConfigNode):
 
     @classmethod
     def from_env(cls, prefix, types=None):
+        """
+        Construct a :class:`Config` from :data:`os.environ` entries
+        that matches the specified ``prefix``.
+        ``prefix`` can either be a simple string prefix
+        or a :class:`dict` mapping string prefixes to the
+        :doc:`target paths <mapping>` at which they will be stored.
+        ``types`` is an optional :class:`dict` mapping string suffixes
+        to callables used to convert matching environment values to the
+        correct type.
+        """
         if not isinstance(prefix, dict):
             prefixes = {prefix: target}
         else:

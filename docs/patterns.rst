@@ -213,6 +213,54 @@ Using the example config files above would result in this config:
 >>> load_config()
 configurator.config.Config({'enabled': True, 'threads': 13})
 
+Config extracted from many environment variables
+------------------------------------------------
+
+If you have configuration that is spread across many environment
+variables that share a common naming pattern, the :meth:`Config.from_env`
+class method can provide a succinct way to extract these.
+
+.. invisible-code-block: python
+
+    replace('os.environ.MYAPP_POSTGRES_HOST', 'some-host', strict=False)
+    replace('os.environ.MYAPP_POSTGRES_PORT', '5432', strict=False)
+    replace('os.environ.MYAPP_REDIS_HOST', 'other-host', strict=False)
+    replace('os.environ.MYAPP_REDIS_PORT', '6379', strict=False)
+
+For example, the following environment variables:
+
+>>> os.environ.get('MYAPP_POSTGRES_HOST')
+'some-host'
+>>> os.environ.get('MYAPP_POSTGRES_PORT')
+'5432'
+>>> os.environ.get('MYAPP_REDIS_HOST')
+'other-host'
+>>> os.environ.get('MYAPP_REDIS_PORT')
+'6379'
+
+A function such as the following could be used to load the configuration:
+
+.. code-block:: python
+
+    from configurator import Config, convert
+    from ast import literal_eval
+    import os
+
+    def load_config():
+        return Config.from_env(
+            prefix={'MYAPP_POSTGRES_': 'postgres',
+                    'MYAPP_REDIS_': 'redis'},
+            types={'_PORT': int}
+        )
+
+Using the example environment above would result in this config:
+
+>>> load_config()
+configurator.config.Config(
+{'postgres': {'host': 'some-host', 'port': 5432},
+ 'redis': {'host': 'other-host', 'port': 6379}}
+)
+
 Config file with command line overrides
 ---------------------------------------
 
