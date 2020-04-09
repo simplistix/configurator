@@ -1,5 +1,3 @@
-from pkg_resources import iter_entry_points
-
 
 class ParseError(Exception):
     """
@@ -12,6 +10,9 @@ class Parsers(dict):
     
     @classmethod
     def from_entrypoints(cls):
+        # `pkg_resources` is slow to import, so defer until we need it.
+        from pkg_resources import iter_entry_points
+
         parsers = cls()
         for entrypoint in iter_entry_points(group='configurator.parser'):
             try:

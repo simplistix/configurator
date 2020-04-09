@@ -16,8 +16,7 @@ class Config(ConfigNode):
     """
 
     __slots__ = ('data', '_previous')
-
-    parsers = Parsers.from_entrypoints()
+    parsers = None
 
     def __init__(self, data=None):
         super(Config, self).__init__(data)
@@ -51,6 +50,11 @@ class Config(ConfigNode):
                 except ValueError:
                     pass
         if not callable(parser):
+            # Loading the parsers takes a long time (≈200 ms) because it causes 
+            # a lot of code to be imported (`pkg_resources`, `toml`, `yaml`, 
+            # etc).  So don't load the parsers until just before we need them.
+            if cls.parsers is None:
+                cls.parsers = Parsers.from_entrypoints()
             parser = cls.parsers.get(parser)
         return cls(parser(stream))
 
