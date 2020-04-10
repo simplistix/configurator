@@ -1,5 +1,3 @@
-from pprint import pformat
-
 
 class ConfigNode(object):
     """
@@ -81,6 +79,7 @@ class ConfigNode(object):
             yield self._wrap(item)
 
     def __repr__(self):
+        from pprint import pformat
         cls = type(self)
         pretty = pformat(self.data, width=70)
         if '\n' in pretty:

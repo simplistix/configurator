@@ -1,5 +1,4 @@
 import os
-from copy import deepcopy
 from io import open, StringIO
 from os.path import exists, expanduser
 
@@ -160,6 +159,7 @@ class Config(ConfigNode):
         if empty:
             base = Config()
         else:
+            from copy import deepcopy
             base = Config(deepcopy(self.data))
         if not isinstance(config, Config):
             config = Config(config)
