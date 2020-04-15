@@ -3,6 +3,14 @@
 Changes
 =======
 
+2.0.0 (15 Apr 2020)
+-------------------
+
+- Performance improvements when import parsers.
+
+- Removed the ability to provide new parsers using `pkg_resources`
+  entry points.
+
 1.3.0 (29 Jan 2020)
 -------------------
 
