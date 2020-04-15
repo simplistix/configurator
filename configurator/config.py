@@ -17,7 +17,7 @@ class Config(ConfigNode):
 
     __slots__ = ('data', '_previous')
 
-    parsers = Parsers.load_available()
+    parsers = Parsers()
 
     def __init__(self, data=None):
         super(Config, self).__init__(data)
@@ -51,7 +51,7 @@ class Config(ConfigNode):
                 except ValueError:
                     pass
         if not callable(parser):
-            parser = cls.parsers.get(parser)
+            parser = cls.parsers[parser]
         return cls(parser(stream))
 
     @classmethod
