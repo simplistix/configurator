@@ -2,7 +2,7 @@
 License
 =======
 
-Copyright (c) 2011-2014 Simplistix Ltd, 2016-2019 Chris Withers
+Copyright (c) 2011-2014 Simplistix Ltd, 2016-2020 Chris Withers
 
 Permission is hereby granted, free of charge, to any person 
 obtaining a copy of this software and associated documentation 
