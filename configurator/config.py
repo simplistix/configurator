@@ -17,7 +17,7 @@ class Config(ConfigNode):
 
     __slots__ = ('data', '_previous')
 
-    parsers = Parsers.from_entrypoints()
+    parsers = Parsers.load_available()
 
     def __init__(self, data=None):
         super(Config, self).__init__(data)

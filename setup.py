@@ -46,12 +46,4 @@ setup(
         ],
         build=['sphinx', 'sphinx-rtd-theme', 'setuptools-git', 'twine', 'wheel']
     ),
-    entry_points={
-        'configurator.parser': [
-            'json = json:load',
-            'toml = toml:load',
-            'yml = yaml:safe_load',
-            'yaml = yaml:safe_load',
-        ],
-    }
 )

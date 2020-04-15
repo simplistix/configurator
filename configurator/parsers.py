@@ -1,6 +1,3 @@
-from pkg_resources import iter_entry_points
-
-
 class ParseError(Exception):
     """
     The exception raised when an appropriate parser cannot be found for a config
@@ -11,15 +8,22 @@ class ParseError(Exception):
 class Parsers(dict):
     
     @classmethod
-    def from_entrypoints(cls):
+    def load_available(cls):
         parsers = cls()
-        for entrypoint in iter_entry_points(group='configurator.parser'):
+        for suffix, module_name, parser in (
+                ('json', 'json', 'load'),
+                ('toml', 'toml', 'load'),
+                ('yml', 'yaml', 'safe_load'),
+                ('yaml', 'yaml', 'safe_load'),
+        ):
             try:
-                parsers[entrypoint.name] = entrypoint.load()
+                module = __import__(module_name)
             except ImportError:
-                # a package may present entry points based on soft dependencies,
+                # a parser may have soft dependencies,
                 # which may not be available.
                 pass
+            else:
+                parsers[suffix] = getattr(module, parser)
         return parsers
 
     def get(self, extension):
