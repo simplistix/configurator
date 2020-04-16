@@ -20,8 +20,3 @@ available:
 .. code-block:: bash
 
   pip install configurator[yaml,toml]
-
-If you wish to provide your own parsers for new formats, this can be done by registering
-entry points for ``configurator.parser`` where the keys are file extensions, without the dot,
-mapping to parser callables as described above.
-
