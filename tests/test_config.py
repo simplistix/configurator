@@ -403,6 +403,24 @@ class TestMergeTests(object):
         })
         compare(config.data, expected={'x': {'y': 1}, 'z': 2})
 
+    def test_mapping_into_empty_dict(self):
+        defaults = Config({
+            'section1': {},
+            'section2': {'nested': {}}
+        })
+        config = Config()
+        config.merge(defaults)
+        config.merge({'value': 1}, mapping={'value': 'section1.value'})
+        config.merge({'value': 2}, mapping={'value': 'section2.nested.value'})
+        compare(config.data, expected={
+            'section1': {'value': 1},
+            'section2': {'nested': {'value': 2}}
+        })
+        compare(defaults.data, expected={
+            'section1': {},
+            'section2': {'nested': {}}
+        })
+
 
 class TestAddition(object):
 

@@ -2,13 +2,16 @@
 
 def merge_dict(context, source, target):
     result = target.copy()
-    for key, value in source.items():
+    for key, source_value in source.items():
         if key in result:
-            try:
-                value = context.merge(value, result[key])
-            except TypeError:
-                # can't merge, so overwrite
-                pass
+            target_value = result[key]
+        else:
+            target_value = type(source_value)()
+        try:
+            value = context.merge(source_value, target_value)
+        except TypeError:
+            # can't merge, so overwrite
+            value = source_value
         result[key] = value
     return result
 
