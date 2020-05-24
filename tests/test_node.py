@@ -27,7 +27,7 @@ class TestInstantiation(object):
         compare(config.data, 1)
 
 
-class TestDictAccess(object):
+class TestItemAccess(object):
 
     def test_there_dict(self):
         config = ConfigNode({'foo': 1})
@@ -110,11 +110,15 @@ class TestDictAccess(object):
         assert isinstance(obj, ConfigNode)
         compare(obj.data, expected=[1])
 
-    def test_set_item(self):
+    def test_set_item_dict(self):
         config = ConfigNode()
-        with ShouldRaise(TypeError):
-            config['foo'] = 1
-        compare(config.data, expected={})
+        config['foo'] = 1
+        compare(config.data, expected={'foo': 1})
+
+    def test_set_item_list(self):
+        config = ConfigNode(['old'])
+        config[0] = 'new'
+        compare(config.data, expected=['new'])
 
 
 class TestAttributeAccess(object):
@@ -159,11 +163,16 @@ class TestAttributeAccess(object):
         with ShouldRaise(AttributeError('foo')):
             config.foo
 
-    def test_set_attr(self):
+    def test_set_attr_dict(self):
         config = ConfigNode()
-        with ShouldRaise(AttributeError):
+        config.foo = 1
+        compare(config.data, expected={'foo': 1})
+
+    def test_set_attr_list(self):
+        config = ConfigNode([])
+        with ShouldRaise(TypeError):
             config.foo = 1
-        compare(config.data, expected={})
+        compare(config.data, expected=[])
 
 
 class TestOtherFunctionality(object):

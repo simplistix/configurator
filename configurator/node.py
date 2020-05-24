@@ -42,6 +42,16 @@ class ConfigNode(object):
         except KeyError:
             raise AttributeError(name)
 
+    def __setattr__(self, name, value):
+        """
+        Set a child of this node. This is a convenience helper that
+        calls :meth:`__setitem__` and can be used when ``name`` is a string.
+        """
+        if name in self.__slots__:
+            super(ConfigNode, self).__setattr__(name, value)
+        else:
+            self[name] = value
+
     def __getitem__(self, name):
         """
         Obtain a child of this node by item access. If the child
@@ -49,6 +59,14 @@ class ConfigNode(object):
         be returned, otherwise the value itself will be returned.
         """
         return self._get(name)
+
+    def __setitem__(self, name, value):
+        """
+        Set the ``value`` for the supplied ``name`` in :attr:`data`.
+        If :attr:`data` is a :class:`dict`, then ``name`` must be a :class:`str`.
+        If :attr:`data` is a :class:`list`, then ``name`` must be an :class:`int`.
+        """
+        self.data[name] = value
 
     def get(self, name, default=None):
         """
