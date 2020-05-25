@@ -246,4 +246,6 @@ class Path(object):
 def parse_text(segment):
     if isinstance(segment, str):
         segment = Path('', *(TextOp(part) for part in segment.split('.')))
+    elif not isinstance(segment, Path):
+        segment = Path('', ItemOp(segment))
     return segment

@@ -1,5 +1,7 @@
 from pprint import pformat
 
+from .path import parse_text, NotPresent
+
 
 class ConfigNode(object):
     """
@@ -98,6 +100,49 @@ class ConfigNode(object):
         """
         for index, item in enumerate(self.data):
             yield self._wrap(index, item)
+
+    def node(self, path=None, create=False):
+        """
+        Obtain a child of this node using a dotted path or
+        :class:`~configurator.path.Path` such as one generated from
+        :attr:`~configurator.source`. ``path`` may also be a simple string or integer, in
+        which case it will be used to obtain a child of this node using item access.
+
+        This always returns a :class:`ConfigNode` or raises an exception if the path
+        cannot be resolved. This allows you to use :meth:`set` even for values in dictionaries
+        or items in lists.
+
+        If ``create`` is ``True``, all nodes along the path will be created as dictionaries
+        if they do not exist.
+        """
+        if path is None:
+            return self
+
+        path = parse_text(path)
+        if not path.ops:
+            return self
+
+        if create:
+            action = 'ensure'
+        else:
+            action = 'get'
+
+        data = self.data
+        for op in path.ops:
+            if isinstance(data, NotPresent):
+                op.not_present(data)
+            else:
+                container = data
+                data = getattr(op, action)(container)
+
+        if isinstance(data, NotPresent):
+            raise data
+
+        text = getattr(op, 'text', None)
+        if text is None:
+            raise TypeError('invalid path: '+str(path))
+
+        return ConfigNode(data, container, op.text)
 
     def set(self, value):
         if self._container is None:

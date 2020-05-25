@@ -2,7 +2,9 @@ from textwrap import dedent
 
 from testfixtures import compare, ShouldRaise
 
+from configurator import source, convert
 from configurator.node import ConfigNode
+from configurator.path import NotPresent
 
 
 class TestInstantiation(object):
@@ -236,3 +238,42 @@ class TestNodeActions(object):
         for child in node:
             child.set(''.join(child.data))
         compare(node.data, expected=['ab', 'cd'], strict=True)
+
+    def test_node_empty(self):
+        node = ConfigNode()
+        assert node.node() is node
+
+    def test_node_path_does_nothing(self):
+        node = ConfigNode()
+        assert node.node(source) is node
+
+    def test_node_dict_item(self):
+        node = ConfigNode({'a': 1, 'b': 2})
+        child = node.node('a')
+        compare(child.data, expected=1)
+        child.set(3)
+        compare(node.data, expected={'a': 3, 'b': 2}, strict=True)
+
+    def test_node_list_item(self):
+        node = ConfigNode(['a', 'b'])
+        child = node.node(0)
+        compare(child.data, expected='a')
+        child.set('c')
+        compare(node.data, expected=['c', 'b'], strict=True)
+
+    def test_node_not_there(self):
+        node = ConfigNode()
+        with ShouldRaise(NotPresent('a')):
+            node.node('a.b.c')
+
+    def test_node_not_there_create(self):
+        root = ConfigNode()
+        child = root.node('a.b.c', create=True)
+        compare(root.data, expected={'a': {'b': {'c': {}}}})
+        child.set(1)
+        compare(root.data, expected={'a': {'b': {'c': 1}}})
+
+    def test_path_no_text_attribute(self):
+        node = ConfigNode({'a': {'b': {'c': '1'}}})
+        with ShouldRaise(TypeError("invalid path: convert(source['a']['b']['c'], int)")):
+            node.node(convert(source['a']['b']['c'], int))
