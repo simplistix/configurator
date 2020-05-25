@@ -10,11 +10,13 @@ API Reference
 
 .. attribute:: source
 
-    The root generative source :class:`Path` for creating :doc:`mappings <mapping>`.
+    The root generative source :class:`~configurator.path.Path` for
+    creating :doc:`mappings <mapping>`.
 
 .. attribute:: target
 
-    The root generative target :class:`Path` for creating :doc:`mappings <mapping>`.
+    The root generative target :class:`~configurator.path.Path` for
+    creating :doc:`mappings <mapping>`.
 
 .. attribute:: default_mergers
 
