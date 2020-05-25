@@ -181,6 +181,9 @@ class TestOtherFunctionality(object):
         node = ConfigNode([{'x': 1}])
         compare(tuple(node)[0], expected=ConfigNode({'x': 2}))
 
+    def test_iterate_over_dict(self):
+        node = ConfigNode({'x': 1, 'y': 2})
+        compare(sorted(node), expected=['x', 'y'])
 
     def test_set_on_root(self):
         node = ConfigNode({'x': 1, 'y': 2})
