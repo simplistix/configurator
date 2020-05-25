@@ -104,7 +104,7 @@ class Config(ConfigNode):
         config.merge(os.environ, mapping)
         return config
 
-    def merge(self, source, mapping=None, mergers=None):
+    def merge(self, source=None, mapping=None, mergers=None):
         """
         Modify this :class:`Config` by merging the provided ``source`` into
         it using any ``mapping`` or ``mergers`` provided.

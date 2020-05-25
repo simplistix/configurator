@@ -1,4 +1,6 @@
-from .path import Path, parse_text, ConvertOp, RequiredOp, NotPresent, IfSuppliedOp
+from .path import (
+    Path, parse_text, ConvertOp, RequiredOp, NotPresent, IfSuppliedOp, ValueOp
+)
 
 
 def load(data, path):
@@ -40,6 +42,13 @@ def if_supplied(source):
     """
     source = parse_text(source)
     return source._extend(IfSuppliedOp())
+
+
+def value(value):
+    """
+    A :doc:`mapping <mapping>` operation that provides a literal source value.
+    """
+    return Path('', ValueOp(value))
 
 
 def store(data, path, value, merge_context=None):

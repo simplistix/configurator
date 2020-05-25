@@ -1,6 +1,6 @@
 from testfixtures import compare
 
-from configurator.mapping import source, target, required, convert
+from configurator.mapping import source, target, required, convert, value
 from configurator.path import parse_text
 
 
@@ -27,6 +27,9 @@ class TestPaths(object):
         ), expected=(
             "required(convert(source['foo'].y, int)).insert(0).append().merge()"
         ))
+
+    def test_repr_value(self):
+        compare(str(value(42)), expected="value(42)")
 
     def test_text_op(self):
         compare(str(parse_text('x.y.z')), expected='x.y.z')

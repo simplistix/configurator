@@ -1,7 +1,7 @@
 from argparse import Namespace
 from testfixtures import compare, ShouldRaise
 
-from configurator.mapping import source, load, convert, store, target, required, if_supplied
+from configurator.mapping import source, load, convert, store, target, required, if_supplied, value
 from configurator.merge import MergeContext
 from configurator.path import NotPresent
 
@@ -142,6 +142,12 @@ class TestSource(object):
 
     def test_if_supplied_str(self):
         compare(str(if_supplied(source.x)), expected='if_supplied(source.x)')
+
+    def test_value(self):
+        compare(load(None, value(42)), expected=42)
+
+    def test_value_if_supplied_falsy(self):
+        compare(load({}, if_supplied(value(None))), expected=NotPresent(None))
 
 
 class TestTarget(object):

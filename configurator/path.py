@@ -189,6 +189,20 @@ class MergeOp(Op):
         return '{}.{}()'.format(base, self.name)
 
 
+class ValueOp(Op):
+
+    name = 'value'
+
+    def __init__(self, value):
+        self.value = value
+
+    def get(self, data):
+        return self.value
+
+    def str(self, base):
+        return '{}({!r})'.format(self.name, self.value)
+
+
 class Path(object):
     """
     A generative object used for constructing source or target mappings.

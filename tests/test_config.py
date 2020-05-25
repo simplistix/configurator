@@ -6,7 +6,7 @@ import pytest
 from configurator import Config, default_mergers
 from io import StringIO
 from configurator.parsers import ParseError
-from configurator.mapping import source, target, convert
+from configurator.mapping import source, target, convert, value
 from testfixtures import compare, ShouldRaise, TempDirectory, Replace
 
 from .compat import type_error
@@ -419,6 +419,17 @@ class TestMergeTests(object):
         compare(defaults.data, expected={
             'section1': {},
             'section2': {'nested': {}}
+        })
+
+    def test_mapping_only_source(self):
+        config = Config()
+        config.merge(mapping={
+            value(1): 'section1.value',
+            value(2): 'section2.nested.value',
+        })
+        compare(config.data, expected={
+            'section1': {'value': 1},
+            'section2': {'nested': {'value': 2}}
         })
 
     def test_clone(self):

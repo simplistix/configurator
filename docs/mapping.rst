@@ -133,6 +133,14 @@ configurator.config.Config({'alpha': {'beta': 'gamma', 'foo': 'bar'}})
   For this reason, it's better to stick to dotted paths unless you need the specific
   behaviour offered by generative mapping.
 
+Generative paths can also be used to provide literal values on the source:
+
+  >>> from configurator import Config, value
+  >>> config = Config()
+  >>> config.merge(mapping={value(42): 'version.minor'})
+  >>> config
+  configurator.config.Config({'version': {'minor': 42}})
+
 Operations
 ~~~~~~~~~~
 
