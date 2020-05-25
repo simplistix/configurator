@@ -3,6 +3,20 @@
 Changes
 =======
 
+2.1.0 (25 May 2020)
+-------------------
+
+- Configuration values my now be set using attribute or item setting on
+  :class:`~.node.ConfigNode` instances.
+
+- :meth:`~.node.ConfigNode.node` can be used to obtain or create a
+  :class:`~.node.ConfigNode` from a dotted path and will give you a node even
+  for a value of a :class:`dict` or item in a :class:`list`.
+
+- class:`~.node.ConfigNode` instances now have a :meth:`~.node.ConfigNode.set`
+  method that can be used to replace the value of that part of the configuration,
+  regardless of it being a whole container, list item or dictionary value.
+
 2.0.0 (15 Apr 2020)
 -------------------
 
