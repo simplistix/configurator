@@ -13,8 +13,8 @@ common: &common
         name: python36
         image: circleci/python:3.6
     - python/pip-run-tests:
-        name: python37
-        image: circleci/python:3.7
+        name: python38
+        image: circleci/python:3.8
     - python/pip-run-tests:
         name: python27-all
         image: circleci/python:2.7
@@ -24,8 +24,8 @@ common: &common
         image: circleci/python:3.6
         install: "-e .[test,toml,yaml]"
     - python/pip-run-tests:
-        name: python37-all
-        image: circleci/python:3.7
+        name: python38-all
+        image: circleci/python:3.8
         install: "-e .[test,toml,yaml]"
 
     - python/coverage:
@@ -33,10 +33,10 @@ common: &common
         requires:
           - python27
           - python36
-          - python37
+          - python38
           - python27-all
           - python36-all
-          - python37-all
+          - python38-all
 
     - python/release:
         name: release
