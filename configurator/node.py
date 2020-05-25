@@ -8,20 +8,21 @@ class ConfigNode(object):
     objects or any :class:`ConfigNode` objects returned by them.
     """
 
-    __slots__ = ('data',)
+    __slots__ = ('_container', '_accessor', 'data')
 
-    def __init__(self, data=None):
+    def __init__(self, data=None, container=None, accessor=None):
         if data is None:
             data = {}
         #: The underlying python object for this node, often a :class:`dict`
         #: or a :class:`list`. While this is part of the public API, care should
         #: be taken when using it, particularly if you choose to modify it.
         self.data = data
+        self._container = container
+        self._accessor = accessor
 
-    @classmethod
-    def _wrap(cls, value):
+    def _wrap(self, accessor, value):
         if isinstance(value, (dict, list)):
-            value = ConfigNode(value)
+            value = ConfigNode(value, self.data, accessor)
         return value
 
     def _get(self, name):
@@ -29,7 +30,7 @@ class ConfigNode(object):
             value = self.data[name]
         except TypeError:
             raise KeyError(name)
-        return self._wrap(value)
+        return self._wrap(name, value)
 
     def __getattr__(self, name):
         """
@@ -86,7 +87,7 @@ class ConfigNode(object):
         be returned, otherwise the value itself will be returned.
         """
         for key, value in sorted(self.data.items()):
-            yield key, self._wrap(value)
+            yield key, self._wrap(key, value)
 
     def __iter__(self):
         """
@@ -95,8 +96,14 @@ class ConfigNode(object):
         If the child is a :class:`dict` or :class:`list`, a :class:`ConfigNode`
         for it will be returned, otherwise the value itself will be returned.
         """
-        for item in self.data:
-            yield self._wrap(item)
+        for index, item in enumerate(self.data):
+            yield self._wrap(index, item)
+
+    def set(self, value):
+        if self._container is None:
+            self.data = value
+        else:
+            self._container[self._accessor] = value
 
     def __repr__(self):
         cls = type(self)

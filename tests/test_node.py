@@ -181,6 +181,12 @@ class TestOtherFunctionality(object):
         node = ConfigNode([{'x': 1}])
         compare(tuple(node)[0], expected=ConfigNode({'x': 2}))
 
+
+    def test_set_on_root(self):
+        node = ConfigNode({'x': 1, 'y': 2})
+        node.set(['a', 'b'])
+        compare(node.data, expected=['a', 'b'])
+
     def test_repr(self):
         node = ConfigNode({'some long key': 'some\nvalue',
                             'another long key': 2,
@@ -191,3 +197,39 @@ class TestOtherFunctionality(object):
              'some long key': 'some\\nvalue',
              'yet another long key': 3}
             )"""))
+
+
+class TestNodeActions(object):
+
+    def test_attr_dict(self):
+        node = ConfigNode({'a': {'b': 1}})
+        compare(node.a.data, expected={'b': 1}, strict=True)
+        node.a.set('c')
+        compare(node.data, expected={'a': 'c'}, strict=True)
+
+    def test_item_dict(self):
+        node = ConfigNode({'a': {'b': 1}})
+        compare(node.a.data, expected={'b': 1}, strict=True)
+        node['a'].set('c')
+        compare(node.data, expected={'a': 'c'}, strict=True)
+
+    def test_item_list(self):
+        node = ConfigNode([['a', 'b'], ['c', 'd']])
+        compare(node[0].data, expected=['a', 'b'], strict=True)
+        node[0].set('e')
+        compare(node.data, expected=['e', ['c', 'd']], strict=True)
+
+    def test_items(self):
+        node = ConfigNode({'a': [1], 'b': [2]})
+        keys = []
+        for key, child in node.items():
+            keys.append(key)
+            child.set(child[0]*2)
+        compare(node.data, expected={'a': 2, 'b': 4}, strict=True)
+        compare(keys, expected=['a', 'b'])
+
+    def test_iter_list(self):
+        node = ConfigNode([['a', 'b'], ['c', 'd']])
+        for child in node:
+            child.set(''.join(child.data))
+        compare(node.data, expected=['ab', 'cd'], strict=True)

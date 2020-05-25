@@ -15,7 +15,7 @@ class Config(ConfigNode):
     The root of the configuration store.
     """
 
-    __slots__ = ('data', '_previous')
+    __slots__ = ConfigNode.__slots__+('_previous',)
 
     parsers = Parsers()
 
