@@ -145,6 +145,9 @@ class ConfigNode(object):
         return ConfigNode(data, container, op.text)
 
     def set(self, value):
+        """
+        Replace the :attr:`data` of this node with the supplied ``value``.
+        """
         if self._container is None:
             self.data = value
         else:
