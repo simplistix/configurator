@@ -3,6 +3,12 @@
 Changes
 =======
 
+2.2.0 (25 May 2020)
+-------------------
+
+- :func:`value` has been added to allow literal values to be used in the left
+  side of mappings passed to :meth:`Config.merge`.
+
 2.1.0 (25 May 2020)
 -------------------
 
