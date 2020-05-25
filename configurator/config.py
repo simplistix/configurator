@@ -121,14 +121,20 @@ class Config(ConfigNode):
                 value = load(source, source_path)
                 self.data = store(self.data, target_path, value, context)
 
+    def clone(self):
+        """
+        Clone this :class:`Config` creating copies of all mutable objects
+        it contains.
+        """
+        return Config(deepcopy(self.data))
+
     def __add__(self, other):
         """
         Configuration stores can be added together.
         This will result in a new :class:`Config` object being returned that
         is created by merging the two original configs.
         """
-        result = Config(type(self.data)())
-        result.merge(self)
+        result = self.clone()
         result.merge(other)
         return result
 
@@ -156,7 +162,7 @@ class Config(ConfigNode):
         if empty:
             base = Config()
         else:
-            base = Config(deepcopy(self.data))
+            base = self.clone()
         if not isinstance(config, Config):
             config = Config(config)
         self._previous.append(self.data)

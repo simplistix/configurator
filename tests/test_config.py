@@ -421,6 +421,18 @@ class TestMergeTests(object):
             'section2': {'nested': {}}
         })
 
+    def test_clone(self):
+        config = Config({'dict': {'a': 1, 'b': 2},
+                         'list': [{'c': 3}, {'d': 4}]})
+        config_ = config.clone()
+        assert config is not config_
+        compare(config_.data, expected=config.data)
+        assert config.data is not config_.data
+        assert config.data['dict'] is not config_.data['dict']
+        assert config.data['list'] is not config_.data['list']
+        assert config.data['list'][0] is not config_.data['list'][0]
+        assert config.data['list'][1] is not config_.data['list'][1]
+
 
 class TestAddition(object):
 
