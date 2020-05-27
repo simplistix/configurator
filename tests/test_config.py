@@ -1,6 +1,7 @@
 from ast import literal_eval
 from tempfile import NamedTemporaryFile
 
+import pickle
 import pytest
 
 from configurator import Config, default_mergers
@@ -472,3 +473,18 @@ class TestAddition(object):
             "Cannot merge <class 'int'> with <class 'dict'>"
         )):
             Config({'foo': 'bar'}) + 1
+
+
+class TestSerialization(object):
+
+    def test_pickle_default_protocol(self):
+        config = Config({'foo': [1, 2]})
+        data = pickle.dumps(config)
+        config_ = pickle.loads(data)
+        compare(expected=config, actual=config_)
+
+    def test_pickle_hickest_protocol(self):
+        config = Config({'foo': [1, 2]})
+        data = pickle.dumps(config, pickle.HIGHEST_PROTOCOL)
+        config_ = pickle.loads(data)
+        compare(expected=config, actual=config_)

@@ -163,3 +163,10 @@ class ConfigNode(object):
             cls.__name__,
             pretty
         )
+
+    def __getstate__(self):
+        return {name: getattr(self, name) for name in self.__slots__}
+
+    def __setstate__(self, data):
+        for name, value in data.items():
+            setattr(self, name, value)
