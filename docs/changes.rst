@@ -3,6 +3,11 @@
 Changes
 =======
 
+2.3.0 (27 May 2020)
+-------------------
+
+- :class:`Config` instances can now be pickled.
+
 2.2.0 (25 May 2020)
 -------------------
 
