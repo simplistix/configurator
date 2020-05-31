@@ -3,6 +3,14 @@
 Changes
 =======
 
+2.4.0 (31 May 2020)
+-------------------
+
+- Allow the list of values considered false by :meth:`if_supplied` to be specified.
+
+- :meth:`if_supplied` no longer considers ``False`` to be false, as when present, that's
+  often an explicitly provided value.
+
 2.3.0 (27 May 2020)
 -------------------
 
