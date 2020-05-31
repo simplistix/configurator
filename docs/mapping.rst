@@ -182,7 +182,7 @@ if_supplied
 
 Some configuration sources provide defaults such as ``None`` or empty strings that are unhelpful
 when mapping into a :class:`Config`. In these cases, the mapping can be configured to treat values
-as not present if they match Python's definitoon of "false" by using the :func:`if_supplied`
+as not present if they match Python's definition of "false" by using the :func:`if_supplied`
 operation:
 
 >>> from argparse import Namespace

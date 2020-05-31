@@ -127,6 +127,10 @@ class TestSource(object):
         data = Namespace(x='1')
         compare(load(data, if_supplied(source.x)), expected='1')
 
+    def test_if_supplied_false(self):
+        data = Namespace(x=False)
+        compare(load(data, if_supplied(source.x)), expected=False)
+
     def test_if_supplied_falsy(self):
         data = Namespace(x=None)
         compare(load(data, if_supplied(source.x)), expected=NotPresent(None))
@@ -134,6 +138,15 @@ class TestSource(object):
     def test_if_supplied_string(self):
         data = Namespace(x='1')
         compare(load(data, if_supplied('x')), expected='1')
+
+    def test_if_supplied_empty_string(self):
+        data = Namespace(x='')
+        compare(load(data, if_supplied('x')), expected=NotPresent(''))
+
+    def test_if_supplied_custom(self):
+        data = Namespace(x='Unavailable')
+        compare(load(data, if_supplied(source.x, false_values={'Unavailable'})),
+                expected=NotPresent('Unavailable'))
 
     def test_if_supplied_required_falsy(self):
         data = Namespace(x=None)

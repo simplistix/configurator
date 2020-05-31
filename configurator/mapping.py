@@ -34,14 +34,14 @@ def required(source):
     return source._extend(RequiredOp())
 
 
-def if_supplied(source):
+def if_supplied(source, false_values=frozenset((None, '', ))):
     """
     A :doc:`mapping <mapping>` operation that indicates the source value
-    should be treated as not present if its value matches Python's definition
-    of "false". This includes empty strings, zero, ``False`` and ``None``.
+    should be treated as not present if its value is in the supplied
+    list of ``false_values``.
     """
     source = parse_text(source)
-    return source._extend(IfSuppliedOp())
+    return source._extend(IfSuppliedOp(false_values))
 
 
 def value(value):

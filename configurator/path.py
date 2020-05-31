@@ -133,8 +133,13 @@ class IfSuppliedOp(Op):
 
     name = 'if_supplied'
 
+    def __init__(self, false_values):
+        self.false_values = false_values
+
     def get(self, data):
-        return data or NotPresent(data)
+        if data in self.false_values:
+            return NotPresent(data)
+        return data
 
     def str(self, base):
         return '{}({})'.format(self.name, base)
