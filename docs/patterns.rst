@@ -84,22 +84,11 @@ This could be loaded with a function such as this:
 .. code-block:: python
 
     from configurator import Config
-
-    def load_config(path):
-        configs = []
-        while path:
-            config = Config.from_path(path)
-            configs.append(config)
-            path = config.get('extends')
-        config = Config()
-        for layer in reversed(configs):
-            config.merge(layer)
-        config.data.pop('extends')
-        return config
+    from configurator.patterns import load_with_extends
 
 Using the two example config files would result in this config:
 
->>> load_config('my_app.yml')
+>>> load_with_extends('my_app.yml', key='extends')
 configurator.config.Config(
 {'data_path': '/var/wherever',
  'foo_enabled': True,
