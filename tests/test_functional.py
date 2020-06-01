@@ -1,16 +1,9 @@
 from argparse import ArgumentParser
 
-import pytest
-from testfixtures import TempDirectory, compare
-
+from testfixtures import compare
 from configurator import Config
 from configurator.mapping import target, convert
-
-
-@pytest.fixture
-def dir():
-    with TempDirectory(encoding='ascii') as d:
-        yield d
+import pytest
 
 
 class TestFunctional(object):
