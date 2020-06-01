@@ -3,6 +3,12 @@
 Changes
 =======
 
+2.5.0 (1 Jun 2020)
+------------------
+
+- Move the code for the "Config file that extends another config file" pattern into
+  a helper function in :func:`configurator.patterns.load_with_extends`.
+
 2.4.0 (31 May 2020)
 -------------------
 
