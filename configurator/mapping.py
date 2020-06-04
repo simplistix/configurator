@@ -34,7 +34,7 @@ def required(source):
     return source._extend(RequiredOp())
 
 
-def if_supplied(source, false_values=frozenset((None, '', ))):
+def if_supplied(source, false_values=(None, '')):
     """
     A :doc:`mapping <mapping>` operation that indicates the source value
     should be treated as not present if its value is in the supplied

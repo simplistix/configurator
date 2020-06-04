@@ -9,7 +9,7 @@ base_dir = os.path.dirname(__file__)
 
 setup(
     name='configurator',
-    version='2.5.0',
+    version='2.5.1',
     author='Chris Withers',
     author_email='chris@withers.org',
     license='MIT',

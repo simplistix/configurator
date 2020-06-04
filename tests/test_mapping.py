@@ -143,6 +143,10 @@ class TestSource(object):
         data = Namespace(x='')
         compare(load(data, if_supplied('x')), expected=NotPresent(''))
 
+    def test_if_supplied_empty_list(self):
+        data = Namespace(x=[])
+        compare(load(data, if_supplied('x')), expected=[])
+
     def test_if_supplied_custom(self):
         data = Namespace(x='Unavailable')
         compare(load(data, if_supplied(source.x, false_values={'Unavailable'})),
