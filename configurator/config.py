@@ -111,7 +111,7 @@ class Config(ConfigNode):
 
         See :doc:`mapping` for more detail.
         """
-        if isinstance(source, Config):
+        if isinstance(source, ConfigNode):
             source = source.data
         context = MergeContext(mergers)
         if mapping is None:

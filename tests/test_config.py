@@ -262,6 +262,11 @@ class TestMergeTests(object):
         config.merge(Config({'baz': 'bob'}))
         compare(config.data, {'foo': 'bar', 'baz': 'bob'})
 
+    def test_config_node(self):
+        config = Config({'foo': 'bar'})
+        config.merge(Config({'root': {'baz': 'bob'}}).root)
+        compare(config.data, {'foo': 'bar', 'baz': 'bob'})
+
     def test_simple_type(self):
         config = Config()
         with ShouldRaise(type_error(
