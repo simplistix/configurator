@@ -37,3 +37,6 @@ API Reference
    :exclude-members: __weakref__, __str__, __repr__, __init__
 
 .. autoclass:: configurator.parsers.ParseError
+
+.. automodule:: configurator.patterns
+   :members:

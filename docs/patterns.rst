@@ -55,6 +55,8 @@ configurator.config.Config(
  'logging_level': 'debug'}
 )
 
+.. _extends-pattern:
+
 Config file that extends another config file
 --------------------------------------------
 
