@@ -60,8 +60,8 @@ configurator.config.Config(
 Config file that extends another config file
 --------------------------------------------
 
-With this pattern, config files use a key to explicitly specify another config
-file that they extend. For example:
+With this :func:`pattern <configurator.patterns.load_with_extends>`, config files use a
+key to explicitly specify another config file that they extend. For example:
 
 .. topic:: base.yml
  :class: write-file
