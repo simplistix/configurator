@@ -3,6 +3,14 @@
 Changes
 =======
 
+2.6.0 (5 Aug 2020)
+------------------
+
+- :class:`~.node.ConfigNode` instances can now be :meth:`merged <Config.merge>`.
+
+- Add support for an optional root in each file when using the
+  :ref:`"extends" <extends-pattern>` pattern.
+
 2.5.1 (4 Jun 2020)
 ------------------
 
