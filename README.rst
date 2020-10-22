@@ -32,7 +32,7 @@ Quickstart
     fs.create_dir('/var/logs/myapp/')
     replace('os.environ.MYAPP_THREADS', '2', strict=False)
     replace('os.environ.MYAPP_CACHE_DIRECTORY', '/var/logs/myapp/', strict=False)
-    replace('sys.argv', ['myapp.py', '--threads', '3'])
+    replace('sys.argv', ['myapp.py', '--threads', '3', '--max-files', '200'])
     from pprint import pprint
 
 To install the library, go for:
@@ -83,7 +83,7 @@ as follows:
 
     config.merge(args, {
         'threads': 'threads',
-        'max-files': 'cache.max_files',
+        'max_files': 'cache.max_files',
     })
 
 To check the configuration we've accumulated is sensible we can use a data validation library
@@ -116,7 +116,7 @@ cache:
 >>> os.environ['MYAPP_CACHE_DIRECTORY']
 '/var/logs/myapp/'
 >>> sys.argv
-['myapp.py', '--threads', '3']
+['myapp.py', '--threads', '3', '--max-files', '200']
 
 With the above sources of configuration, we'd end up with a configuration store that we can use as
 follows:
@@ -124,7 +124,7 @@ follows:
 >>> config.cache.location
 '/var/logs/myapp/'
 >>> config.cache.max_files
-100
+200
 >>> config.banner
 'default banner'
 >>> config.threads
