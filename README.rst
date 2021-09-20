@@ -4,8 +4,8 @@ configurator
 
 |CircleCI|_  |Docs|_
 
-.. |CircleCI| image:: https://circleci.com/gh/Simplistix/configurator/tree/master.svg?style=shield
-.. _CircleCI: https://circleci.com/gh/Simplistix/configurator/tree/master
+.. |CircleCI| image:: https://circleci.com/gh/simplistix/configurator/tree/master.svg?style=shield
+.. _CircleCI: https://circleci.com/gh/simplistix/configurator/tree/master
 
 .. |Docs| image:: https://readthedocs.org/projects/configurator/badge/?version=latest
 .. _Docs: http://configurator.readthedocs.org/en/latest/
