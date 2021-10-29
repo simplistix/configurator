@@ -41,7 +41,7 @@ setup(
             'pyfakefs',
             'pytest',
             'pytest-cov',
-            'sybil',
+            'sybil<3',
             'testfixtures',
             'voluptuous',
         ],
