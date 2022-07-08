@@ -91,16 +91,14 @@ configurator.config.Config({})
 If you already have a deserialized source of configuration information, you can
 wrap a :class:`Config` around it and use it from that point onwards:
 
->>> import requests
-
 .. invisible-code-block: python
 
+    import requests
     from testfixtures.mock import Mock
     requests = Mock()
     requests.get.return_value.json.return_value = {'cache': {'location': '/var/my_app/'}}
     replace('sys.modules.requests', requests, strict=False)
 
->>> import requests
 >>> Config(requests.get('http://config-store/myapp.json').json())
 configurator.config.Config({'cache': {'location': '/var/my_app/'}})
 
