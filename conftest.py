@@ -6,8 +6,8 @@ from doctest import REPORT_NDIFF, ELLIPSIS
 import pytest
 from pyfakefs.fake_filesystem_unittest import Patcher
 from sybil import Sybil
-from sybil.parsers.doctest import DocTestParser, FIX_BYTE_UNICODE_REPR
-from sybil.parsers.codeblock import CodeBlockParser
+from sybil.parsers.doctest import DocTestParser
+from sybil.parsers.codeblock import PythonCodeBlockParser
 from testfixtures import Replacer, TempDirectory
 from testfixtures.sybil import FileParser
 
@@ -45,8 +45,8 @@ def replace():
 
 pytest_collect_file = Sybil(
     parsers=[
-        DocTestParser(optionflags=REPORT_NDIFF|ELLIPSIS|FIX_BYTE_UNICODE_REPR),
-        CodeBlockParser(['print_function']),
+        DocTestParser(optionflags=REPORT_NDIFF|ELLIPSIS),
+        PythonCodeBlockParser(),
         FileParser('tempdir')
     ],
     pattern='*.rst',
