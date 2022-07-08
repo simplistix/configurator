@@ -1,42 +1,24 @@
 version: 2.1
 
 orbs:
-  python: cjw296/python-ci@1.2
+  python: cjw296/python-ci@3.1
 
 common: &common
   jobs:
-
     - python/pip-run-tests:
-        name: python27
-        image: circleci/python:2.7
-    - python/pip-run-tests:
-        name: python36
-        image: circleci/python:3.6
-    - python/pip-run-tests:
-        name: python38
-        image: circleci/python:3.8
-    - python/pip-run-tests:
-        name: python27-all
-        image: circleci/python:2.7
-        install: "-e .[test,toml,yaml]"
-    - python/pip-run-tests:
-        name: python36-all
-        image: circleci/python:3.6
-        install: "-e .[test,toml,yaml]"
-    - python/pip-run-tests:
-        name: python38-all
-        image: circleci/python:3.8
-        install: "-e .[test,toml,yaml]"
+        matrix:
+          parameters:
+            image:
+              - cimg/python:3.6
+              - cimg/python:3.10
+            extras:
+              - "[test]"
+              - "[test,toml,yaml]"
 
     - python/coverage:
         name: coverage
         requires:
-          - python27
-          - python36
-          - python38
-          - python27-all
-          - python36-all
-          - python38-all
+          - python/pip-run-tests
 
     - python/release:
         name: release
