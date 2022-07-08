@@ -14,8 +14,6 @@ from testfixtures.sybil import FileParser
 @pytest.fixture(scope='module')
 def fs_state():
     pytest.importorskip("yaml")
-    if sys.version_info < (3, 6):
-        pytest.skip('docs are py3 only')
     patcher = Patcher(additional_skip_names=['expanduser'])
     patcher.setUp()
     patcher.pause()

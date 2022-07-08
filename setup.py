@@ -1,5 +1,5 @@
 # See license.txt for license details.
-# Copyright (c) 2011-2014 Simplistix Ltd, 2016-2020 Chris Withers
+# Copyright (c) 2011-2014 Simplistix Ltd, 2016-2022 Chris Withers
 
 import os
 
@@ -22,16 +22,12 @@ setup(
     classifiers=[
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
     ],
     packages=find_packages(exclude=["tests"]),
     zip_safe=False,
     include_package_data=True,
+    python_requires=">=3.6",
     extras_require=dict(
         yaml=['pyyaml'],
         toml=['toml'],
