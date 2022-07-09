@@ -71,12 +71,18 @@ class ConfigNode(object):
         """
         self.data[name] = value
 
-    def get(self, name, default=None):
+    def get(self, name=None, default=None):
         """
         Obtain a child of this node by access like :meth:`dict.get`. If the child
         is a :class:`dict` or :class:`list`, a :class:`ConfigNode` for it will
         be returned, otherwise the value itself will be returned.
+
+        If ``name`` is not specified, the :attr:`data` for this node will be returned.
+        This can be helpful when using :meth:`node` to return :class:`ConfigNode` objects
+        for simple values.
         """
+        if name is None:
+            return self.data
         try:
             return self._get(name)
         except KeyError:

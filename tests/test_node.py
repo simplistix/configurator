@@ -277,3 +277,7 @@ class TestNodeActions(object):
         node = ConfigNode({'a': {'b': {'c': '1'}}})
         with ShouldRaise(TypeError("invalid path: convert(source['a']['b']['c'], int)")):
             node.node(convert(source['a']['b']['c'], int))
+
+    def test_node_and_get(self):
+        node = ConfigNode({'a': 1, 'b': 2})
+        compare(node.node('a').get(), expected=1)

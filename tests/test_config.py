@@ -247,6 +247,11 @@ class TestNodeBehaviour(object):
         config = Config({'foo': 'bar'})
         compare(config.foo, expected='bar')
 
+    def test_get_on_name_conflict(self):
+        config = Config({'merge': True})
+        assert config.merge is not True
+        compare(config.get('merge'), expected=True)
+
 
 class TestMergeTests(object):
 
