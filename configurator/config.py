@@ -57,8 +57,9 @@ class Config(ConfigNode):
     @classmethod
     def from_path(cls, path, parser=None, encoding=None, optional=False):
         """
-        Construct a :class:`Config` from file specified as a path. This path
-        with have ``~`` expanded. If specified, ``encoding`` will be used to
+        Construct a :class:`Config` from file specified as either a string path or a
+        :class:`pathlib.Path`.
+        This path with have ``~`` expanded. If specified, ``encoding`` will be used to
         decode the content of the file. An explicit :doc:`parser <parsers>`
         can be specified, if necessary, but the correct one will usually be
         guessed from the file extension.

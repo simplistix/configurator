@@ -1,4 +1,5 @@
 from ast import literal_eval
+from pathlib import Path
 from tempfile import NamedTemporaryFile
 
 import pickle
@@ -59,6 +60,13 @@ class TestInstantiation(object):
             config = Config.from_path(source.name)
         compare(config.x, expected=1)
 
+    def test_pathlib_guess_parser(self):
+        with NamedTemporaryFile(suffix='.json') as source:
+            source.write(b'{"x": 1}')
+            source.flush()
+            config = Config.from_path(Path(source.name))
+        compare(config.x, expected=1)
+
     def test_path_guess_parser_no_extension(self):
         with TempDirectory() as dir:
             path = dir.write('nope', b'{"x": 1}')
@@ -89,6 +97,13 @@ class TestInstantiation(object):
             source.write(b'{"x": "\xa3"}')
             source.flush()
             config = Config.from_path(source.name, 'json', encoding='latin-1')
+        compare(config.x, expected=u'\xa3')
+
+    def test_pathlib_with_encoding(self):
+        with NamedTemporaryFile() as source:
+            source.write(b'{"x": "\xa3"}')
+            source.flush()
+            config = Config.from_path(Path(source.name), 'json', encoding='latin-1')
         compare(config.x, expected=u'\xa3')
 
     def test_stream_with_name_guess_parser(self):
