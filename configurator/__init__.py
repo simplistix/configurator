@@ -1,6 +1,7 @@
 from .config import Config
 from .merge import default_mergers
 from .mapping import source, target, convert, required, if_supplied, value
+from .proxy import Proxy
 
 __all__ = (
     'Config',

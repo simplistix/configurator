@@ -1,5 +1,6 @@
 from pprint import pformat
 
+from .data import DataValue
 from .path import parse_text, NotPresent
 
 
@@ -23,6 +24,8 @@ class ConfigNode(object):
         self._accessor = accessor
 
     def _wrap(self, accessor, value):
+        if isinstance(value, DataValue):
+            value = value.get()
         if isinstance(value, (dict, list)):
             value = ConfigNode(value, self.data, accessor)
         return value
@@ -82,7 +85,7 @@ class ConfigNode(object):
         for simple values.
         """
         if name is None:
-            return self.data
+            return self.data.get() if isinstance(self.data, DataValue) else self.data
         try:
             return self._get(name)
         except KeyError:
@@ -135,6 +138,8 @@ class ConfigNode(object):
 
         data = self.data
         for op in path.ops:
+            if isinstance(data, DataValue):
+                data = data.get()
             if isinstance(data, NotPresent):
                 op.not_present(data)
             else:

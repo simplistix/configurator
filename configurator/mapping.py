@@ -1,15 +1,18 @@
-from .path import (
-    Path, parse_text, ConvertOp, RequiredOp, NotPresent, IfSuppliedOp, ValueOp
-)
+from .data import DataValue
+from .path import Path, parse_text, ConvertOp, RequiredOp, NotPresent, IfSuppliedOp, ValueOp
 
 
 def load(data, path):
     path = parse_text(path)
+    if isinstance(data, DataValue):
+        data = data.get()
     for op in path.ops:
         if isinstance(data, NotPresent):
             op.not_present(data)
         else:
             data = op.get(data)
+            if isinstance(data, DataValue):
+                data = data.get()
     return data
 
 

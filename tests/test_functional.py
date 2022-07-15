@@ -1,9 +1,12 @@
 from argparse import ArgumentParser
 
-from testfixtures import compare
+from testfixtures import compare, ShouldRaise
 from configurator import Config
+from configurator.data import DataValue
 from configurator.mapping import target, convert
 import pytest
+
+from configurator.proxy import Proxy
 
 
 class TestFunctional(object):
@@ -86,6 +89,131 @@ class TestFunctional(object):
         compare(config.base, expected=1)
         compare(config.user, expected=2)
         compare(config.file, expected=3)
+
+    def test_lazy_load(self, dir):
+        yaml = pytest.importorskip("yaml")
+
+        class VaultClient:
+
+            def __init__(self, host, token):
+                self.host = host
+                self.token = token
+
+            def load(self, key):
+                return {'name': key.capitalize(), 'password': '...'}
+
+        class VaultValue(DataValue):
+
+            def __init__(self, client, key):
+                self.client = client
+                self.key = key
+
+            def get(self):
+                return self.client.load(self.key)
+
+        client_ = Proxy()
+
+        def parser(client):
+
+            class Loader(yaml.Loader):
+                pass
+
+            def value_from_yaml(loader, node):
+                return VaultValue(client, loader.construct_mapping(node)['key'])
+
+            Loader.add_constructor('!from_vault', value_from_yaml)
+
+            def parser_(path):
+                return yaml.load(path, Loader)
+
+            return parser_
+
+        parser_ = parser(client_)
+
+        path1 = dir.write('default.yml', '''
+            vault:
+              host: localhost
+              token: foo
+            users:
+            - !from_vault {key: someuser}
+        ''')
+
+        path2 = dir.write('testing.yml', '''
+            users:
+            - !from_vault {key: testuser}
+        ''')
+
+        default = Config.from_path(path1, parser=parser_)
+        testing = Config.from_path(path2, parser=parser_)
+
+        # confirm the proxy isn't configured at this point, and so the values can't
+        # be resolved without raising an exception:
+        with ShouldRaise(RuntimeError('Cannot use proxy before it is configured')):
+            default.users[0].name
+        with ShouldRaise(RuntimeError('Cannot use proxy before it is configured')):
+            testing.users[0].name
+
+        config = default + testing
+
+        client_.set(VaultClient(**config.vault.data))
+        compare(config.users[0].data, expected={'name': 'Someuser', 'password': '...'})
+
+        # make sure iteration works:
+        compare([user.name for user in config.users], expected=['Someuser', 'Testuser'])
+
+        # make sure clone still works:
+        config.clone()
+        compare(config.users.data[0], expected=VaultValue(client_, 'someuser'))
+
+    def test_change_proxy_after_clone(self):
+        user = Proxy()
+        config = Config({'user': user})
+        with ShouldRaise(RuntimeError('Cannot use proxy before it is configured')):
+            config.user.get()
+
+        config.set_proxy(user, 'a')
+        compare(config.user.get(), expected='a')
+
+        config_ = config.clone()
+        config_.set_proxy(user, 'b')
+
+        compare(config.user.get(), expected='a')
+        compare(config_.user.get(), expected='b')
+
+    def test_proxy_setting_with_merge(self):
+        db = Proxy()
+
+        class User(DataValue):
+
+            def __init__(self, db, name):
+                self.db = db
+                self.name = name
+
+            def get(self):
+                db_ = self.db.get()
+                return f'{self.name} from {db_}'
+
+        config1 = Config({'users': [User(db, 'a')]})
+        config2 = Config({'users': [User(db, 'b')]})
+
+        db.set(0)
+        compare(config1.users, expected=['a from 0'])
+        compare(config2.users, expected=['b from 0'])
+
+        config1.set_proxy(db, 1)
+        config2.set_proxy(db, 2)
+        compare(config1.users, expected=['a from 1'])
+        compare(config2.users, expected=['b from 2'])
+
+        config3 = config1 + config2
+        compare(config1.users, expected=['a from 1'])
+        compare(config2.users, expected=['b from 2'])
+        compare(config3.users, expected=['a from 1', 'b from 2'])
+
+        config3.set_proxy(db, 3)
+        compare(config1.users, expected=['a from 1'])
+        compare(config2.users, expected=['b from 2'])
+        compare(config3.users, expected=['a from 3', 'b from 3'])
 
 
 def test_fake_fs(fs):
