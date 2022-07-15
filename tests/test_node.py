@@ -281,3 +281,7 @@ class TestNodeActions(object):
     def test_node_and_get(self):
         node = ConfigNode({'a': 1, 'b': 2})
         compare(node.node('a').get(), expected=1)
+
+    def test_node_and_get_nested(self):
+        node = ConfigNode({'a': {'b': 2}})
+        compare(node.node('a').get(), expected={'b': 2})
