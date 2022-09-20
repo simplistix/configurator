@@ -3,6 +3,17 @@
 Changes
 =======
 
+3.0.0 (20 Sep 2022)
+-------------------
+
+- Drop Python 2 support.
+
+- :meth:`~.node.ConfigNode.get` can now be used without specifying a name
+  to return the value of nodes representing simple attributes.
+
+- Explicit support for :class:`pathlib.Path` objects.
+
+
 2.6.0 (5 Aug 2020)
 ------------------
 
