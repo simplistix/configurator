@@ -87,6 +87,27 @@ class TestFunctional(object):
         compare(config.user, expected=2)
         compare(config.file, expected=3)
 
+    def test_apply_mapping(self):
+        config = Config({'foo': {'bar': [1, 2], 'baz': 'bob'}})
+        config.apply({
+            'new': 42,
+            target.bar.insert(0): -1,
+            'foo.baz.bob': 'fred',
+            target.bar.append(): 3,
+        })
+        compare(config.data, expected={'foo': {'bar': [-1, 1, 2, 3], 'baz': 'fred'}, 'new': 42})
+
+    def test_apply_sequence(self):
+        config = Config({'foo': {'bar': [1, 2], 'baz': 'bob'}})
+        config.apply(
+            path('new').set(42),
+            target.bar.insert(0)
+        )
+
+    def test_apply_sequence_replace_whole_list(self):
+        config = Config({'foo': {'bar': [1, 2], 'baz': 'bob'}})
+        config.apply()
+
 
 def test_fake_fs(fs):
     fs.create_file('/foo/bar.yml', contents='foo: 1\n')
