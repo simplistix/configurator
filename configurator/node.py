@@ -55,6 +55,17 @@ class ConfigNode:
         else:
             self[name] = value
 
+    def __delattr__(self, name):
+        """
+        Remove a child of this node by attribute access. This is a convenience
+        helper that calls :meth:`__delitem__` and can be used when ``name`` is
+        a string.
+        """
+        try:
+            del self[name]
+        except KeyError:
+            raise AttributeError(name)
+
     def __getitem__(self, name):
         """
         Obtain a child of this node by item access. If the child
@@ -70,6 +81,14 @@ class ConfigNode:
         If :attr:`data` is a :class:`list`, then ``name`` must be an :class:`int`.
         """
         self.data[name] = value
+
+    def __delitem__(self, name):
+        """
+        Remove the supplied ``name`` in :attr:`data`.
+        If :attr:`data` is a :class:`dict`, then ``name`` must be a :class:`str`.
+        If :attr:`data` is a :class:`list`, then ``name`` must be an :class:`int`.
+        """
+        del self.data[name]
 
     def get(self, name=None, default=None):
         """
