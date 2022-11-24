@@ -1,5 +1,4 @@
 import linecache
-import sys
 import tokenize
 from doctest import REPORT_NDIFF, ELLIPSIS
 
@@ -10,6 +9,7 @@ from sybil.parsers.doctest import DocTestParser
 from sybil.parsers.codeblock import PythonCodeBlockParser
 from testfixtures import Replacer, TempDirectory
 from testfixtures.sybil import FileParser
+
 
 @pytest.fixture(scope='module')
 def fs_state():
