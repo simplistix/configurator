@@ -34,7 +34,7 @@ default_mergers = MergeableDict({
 })
 
 
-class MergeContext(object):
+class MergeContext:
 
     mergers = default_mergers
 

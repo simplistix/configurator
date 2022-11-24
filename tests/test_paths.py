@@ -4,7 +4,7 @@ from configurator.mapping import source, target, required, convert, value
 from configurator.path import parse_text
 
 
-class TestPaths(object):
+class TestPaths:
 
     def test_repr(self):
         compare(repr(source), expected="Path:source")

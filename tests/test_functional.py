@@ -6,7 +6,7 @@ from configurator.mapping import target, convert
 import pytest
 
 
-class TestFunctional(object):
+class TestFunctional:
 
     def test_layered(self, dir):
         # defaults

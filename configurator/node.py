@@ -3,7 +3,7 @@ from pprint import pformat
 from .path import parse_text, NotPresent
 
 
-class ConfigNode(object):
+class ConfigNode:
     """
     A node in the configuration store.
     These are obtained by using the methods below on :class:`~configurator.Config`

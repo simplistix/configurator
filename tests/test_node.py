@@ -7,7 +7,7 @@ from configurator.node import ConfigNode
 from configurator.path import NotPresent
 
 
-class TestInstantiation(object):
+class TestInstantiation:
 
     def test_empty(self):
         config = ConfigNode()
@@ -29,7 +29,7 @@ class TestInstantiation(object):
         compare(config.data, 1)
 
 
-class TestItemAccess(object):
+class TestItemAccess:
 
     def test_there_dict(self):
         config = ConfigNode({'foo': 1})
@@ -123,7 +123,7 @@ class TestItemAccess(object):
         compare(config.data, expected=['new'])
 
 
-class TestAttributeAccess(object):
+class TestAttributeAccess:
 
     def test_there(self):
         config = ConfigNode({'foo': 1})
@@ -177,7 +177,7 @@ class TestAttributeAccess(object):
         compare(config.data, expected=[])
 
 
-class TestOtherFunctionality(object):
+class TestOtherFunctionality:
 
     def test_iterate_over_list_of_dicts(self):
         node = ConfigNode([{'x': 1}])
@@ -204,7 +204,7 @@ class TestOtherFunctionality(object):
             )"""))
 
 
-class TestNodeActions(object):
+class TestNodeActions:
 
     def test_attr_dict(self):
         node = ConfigNode({'a': {'b': 1}})
