@@ -1,7 +1,7 @@
 class NotPresent(Exception): pass
 
 
-class Op(object):
+class Op:
 
     name = 'op'
 
@@ -208,7 +208,7 @@ class ValueOp(Op):
         return '{}({!r})'.format(self.name, self.value)
 
 
-class Path(object):
+class Path:
     """
     A generative object used for constructing source or target mappings.
     See :doc:`mapping` for details.

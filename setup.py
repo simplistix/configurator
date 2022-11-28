@@ -1,11 +1,6 @@
 # See license.txt for license details.
 # Copyright (c) 2011-2014 Simplistix Ltd, 2016-2022 Chris Withers
-
-import os
-
 from setuptools import setup, find_packages
-
-base_dir = os.path.dirname(__file__)
 
 setup(
     name='configurator',

@@ -7,7 +7,7 @@ from configurator.node import ConfigNode
 from configurator.path import NotPresent
 
 
-class TestInstantiation(object):
+class TestInstantiation:
 
     def test_empty(self):
         config = ConfigNode()
@@ -29,7 +29,7 @@ class TestInstantiation(object):
         compare(config.data, 1)
 
 
-class TestItemAccess(object):
+class TestItemAccess:
 
     def test_there_dict(self):
         config = ConfigNode({'foo': 1})
@@ -122,8 +122,28 @@ class TestItemAccess(object):
         config[0] = 'new'
         compare(config.data, expected=['new'])
 
+    def test_remove_dict(self):
+        config = ConfigNode({'foo': 1})
+        del config['foo']
+        compare(config.data, expected={})
 
-class TestAttributeAccess(object):
+    def test_remove_not_there_dict(self):
+        config = ConfigNode({'foo': 1})
+        with ShouldRaise(KeyError('bar')):
+            del config['bar']
+
+    def test_remove_list(self):
+        config = ConfigNode(["x", "y"])
+        del config[0]
+        compare(config.data, expected=["y"])
+
+    def test_remove_not_there_list(self):
+        config = ConfigNode(["x", "y"])
+        with ShouldRaise(IndexError('list assignment index out of range')):
+            del config[2]
+
+
+class TestAttributeAccess:
 
     def test_there(self):
         config = ConfigNode({'foo': 1})
@@ -176,8 +196,18 @@ class TestAttributeAccess(object):
             config.foo = 1
         compare(config.data, expected=[])
 
+    def test_del_attr(self):
+        config = ConfigNode({"foo": 1})
+        del config.foo
+        compare(config.data, expected={})
 
-class TestOtherFunctionality(object):
+    def test_del_attr_not_there_dict(self):
+        config = ConfigNode({"foo": 1})
+        with ShouldRaise(AttributeError("bar")):
+            del config.bar
+
+
+class TestOtherFunctionality:
 
     def test_iterate_over_list_of_dicts(self):
         node = ConfigNode([{'x': 1}])
@@ -204,7 +234,7 @@ class TestOtherFunctionality(object):
             )"""))
 
 
-class TestNodeActions(object):
+class TestNodeActions:
 
     def test_attr_dict(self):
         node = ConfigNode({'a': {'b': 1}})

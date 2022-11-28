@@ -6,7 +6,7 @@ from configurator.merge import MergeContext
 from configurator.path import NotPresent
 
 
-class TestSource(object):
+class TestSource:
 
     def test_root(self):
         data = {'foo'}
@@ -167,7 +167,7 @@ class TestSource(object):
         compare(load({}, if_supplied(value(None))), expected=NotPresent(None))
 
 
-class TestTarget(object):
+class TestTarget:
 
     def test_root(self):
         data = {'foo'}

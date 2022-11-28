@@ -16,7 +16,7 @@ def python_literal(stream):
     return literal_eval(stream.read())
 
 
-class TestInstantiation(object):
+class TestInstantiation:
 
     def test_empty(self):
         config = Config()
@@ -179,7 +179,7 @@ class TestInstantiation(object):
         compare(config.data, expected={})
 
 
-class TestPushPop(object):
+class TestPushPop:
 
     def test_push_pop(self):
         config = Config({'x': 1, 'y': 2})
@@ -252,7 +252,7 @@ class TestPushPop(object):
         compare(config.x.y, expected='z')
 
 
-class TestNodeBehaviour(object):
+class TestNodeBehaviour:
 
     def test_dict_access(self):
         config = Config({'foo': 'bar'})
@@ -268,7 +268,7 @@ class TestNodeBehaviour(object):
         compare(config.get('merge'), expected=True)
 
 
-class TestMergeTests(object):
+class TestMergeTests:
 
     def test_empty_config(self):
         config = Config()
@@ -469,7 +469,7 @@ class TestMergeTests(object):
         assert config.data['list'][1] is not config_.data['list'][1]
 
 
-class TestAddition(object):
+class TestAddition:
 
     def test_top_level_dict(self):
         config1 = Config({'foo': 'bar'})
@@ -498,7 +498,7 @@ class TestAddition(object):
             Config({'foo': 'bar'}) + 1
 
 
-class TestSerialization(object):
+class TestSerialization:
 
     def test_pickle_default_protocol(self):
         config = Config({'foo': [1, 2]})

@@ -179,7 +179,7 @@ class Config(ConfigNode):
         self.data = self._previous.pop()
 
 
-class PushContext(object):
+class PushContext:
 
     def __init__(self, config, data):
         self.config = config

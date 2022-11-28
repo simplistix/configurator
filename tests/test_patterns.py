@@ -6,7 +6,7 @@ from configurator import Config
 from configurator.patterns import load_with_extends
 
 
-class TestLoadWithExtends(object):
+class TestLoadWithExtends:
 
     def test_key_not_present(self, dir):
         path = dir.write('file.json', '{"key":"value"}')
