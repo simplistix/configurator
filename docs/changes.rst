@@ -3,6 +3,12 @@
 Changes
 =======
 
+3.1.0 (28 Nov 2022)
+-------------------
+
+- Add support for deleting items and attributes via the :class:`~.node.ConfigNode`
+  interface.
+
 3.0.0 (20 Sep 2022)
 -------------------
 
