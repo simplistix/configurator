@@ -113,7 +113,7 @@ class ConfigNode:
         is a :class:`dict` or :class:`list`, a :class:`ConfigNode` for it will
         be returned, otherwise the value itself will be returned.
         """
-        for key, value in sorted(self.data.items()):
+        for key, value in self.data.items():
             yield key, self._wrap(key, value)
 
     def __iter__(self):

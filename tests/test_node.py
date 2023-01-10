@@ -98,7 +98,7 @@ class TestItemAccess:
 
     def test_items_dict(self):
         config = ConfigNode({'foo': 1, 'bar': 2})
-        compare(config.items(), expected=[('bar', 2), ('foo', 1)])
+        compare(config.items(), expected=[('foo', 1), ('bar', 2)])
 
     def test_items_list(self):
         config = ConfigNode([])
