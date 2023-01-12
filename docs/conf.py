@@ -2,13 +2,14 @@
 import datetime, os, pkg_resources
 
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
-
-intersphinx_mapping = {'http://docs.python.org': None}
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3/', None),
+}
 
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.intersphinx'
-    ]
+]
 
 # General
 source_suffix = '.rst'
@@ -28,7 +29,8 @@ htmlhelp_basename = project+'doc'
 
 # Options for LaTeX output
 latex_documents = [
-  ('index',project+'.tex', project+u' Documentation',
-   'Chris Withers', 'manual'),
+    ('index',project+'.tex', project+u' Documentation',
+     'Chris Withers', 'manual'),
 ]
 
+nitpicky = True
