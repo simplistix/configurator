@@ -1,5 +1,5 @@
-# See license.txt for license details.
-# Copyright (c) 2011-2014 Simplistix Ltd, 2016-2022 Chris Withers
+# See LICENSE.txt for license details.
+# Copyright (c) 2011-2014 Simplistix Ltd, 2016 onwards Chris Withers
 from setuptools import setup, find_packages
 
 setup(
