@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import datetime, os, pkg_resources
 
-on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3/', None),
 }
@@ -24,7 +23,7 @@ exclude_patterns = [
 pygments_style = 'sphinx'
 
 # Options for HTML output
-html_theme = 'default' if on_rtd else 'sphinx_rtd_theme'
+html_theme = 'furo'
 htmlhelp_basename = project+'doc'
 
 # Options for LaTeX output
