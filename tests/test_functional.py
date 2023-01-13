@@ -1,5 +1,6 @@
 from argparse import ArgumentParser
 
+import yaml
 from testfixtures import compare
 from configurator import Config
 from configurator.mapping import target, convert
@@ -86,6 +87,34 @@ class TestFunctional:
         compare(config.base, expected=1)
         compare(config.user, expected=2)
         compare(config.file, expected=3)
+
+    def test_lazy_load(self, dir):
+        path = dir.write('default.yml', '''
+            vault:
+              host: localhost
+              token: foo
+            users:
+            - !from_vault {key: someuser}
+        ''')
+
+        class VaultValue:
+
+            def __init__(self, key):
+                self.key = key
+
+        class Loader(yaml.Loader):
+            pass
+
+        def value_from_yaml(loader, node):
+            return VaultValue(loader.construct_mapping(node)['key'])
+
+        Loader.add_constructor('!from_vault', value_from_yaml)
+
+        def parser_(path):
+            return yaml.load(path, Loader)
+
+        config = Config.from_path(path, parser_)
+        compare(config.users.data, expected=[VaultValue('someuser')])
 
 
 def test_fake_fs(fs):
