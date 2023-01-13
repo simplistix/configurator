@@ -10,7 +10,7 @@ common: &common
           parameters:
             image:
               - cimg/python:3.6
-              - cimg/python:3.10
+              - cimg/python:3.11
             extras:
               - "[test]"
               - "[test,toml,yaml]"
