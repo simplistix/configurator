@@ -208,7 +208,7 @@ Config extracted from many environment variables
 ------------------------------------------------
 
 If you have configuration that is spread across many environment
-variables that share a common naming pattern, the :meth:`Config.from_env`
+variables that share a common naming pattern, the :any:`Config.from_env`
 class method can provide a succinct way to extract these.
 
 .. invisible-code-block: python

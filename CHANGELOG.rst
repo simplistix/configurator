@@ -30,7 +30,7 @@ Changes
 ------------------
 
 - Change default `false_values` for :meth:`if_supplied` to be a :class:`tuple` rather
-  a :class:`frozendict`, fixing a bug that occurred when source data wasn't hashable.
+  a :class:`frozenset`, fixing a bug that occurred when source data wasn't hashable.
 
 2.5.0 (1 Jun 2020)
 ------------------
