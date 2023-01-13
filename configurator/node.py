@@ -195,3 +195,9 @@ class ConfigNode:
     def __setstate__(self, data):
         for name, value in data.items():
             setattr(self, name, value)
+
+    def origin(self):
+        pass
+
+    def history(self):
+        pass
