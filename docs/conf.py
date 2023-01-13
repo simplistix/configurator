@@ -33,3 +33,6 @@ latex_documents = [
 ]
 
 nitpicky = True
+nitpick_ignore = [
+    ('py:func', 'configurator.merge.merge_dict')  # private method, may go away soon?
+]
