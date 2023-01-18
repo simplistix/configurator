@@ -1,34 +1,12 @@
-import linecache
-import tokenize
 from doctest import REPORT_NDIFF, ELLIPSIS
 
 import pytest
-from pyfakefs.fake_filesystem_unittest import Patcher
+from pyfakefs.pytest_plugin import fs_module as fs
 from sybil import Sybil
 from sybil.parsers.doctest import DocTestParser
 from sybil.parsers.codeblock import PythonCodeBlockParser
 from testfixtures import Replacer, TempDirectory
 from testfixtures.sybil import FileParser
-
-
-@pytest.fixture(scope='module')
-def fs_state():
-    pytest.importorskip("yaml")
-    patcher = Patcher(additional_skip_names=['expanduser'])
-    patcher.setUp()
-    patcher.pause()
-    yield patcher
-    patcher.tearDown()
-
-
-@pytest.fixture()
-def fs(fs_state):
-    # We need our own one to have state across sections in documents.
-    fs_state.resume()
-    linecache.open = fs_state.original_open
-    tokenize._builtin_open = fs_state.original_open
-    yield fs_state.fs
-    fs_state.pause()
 
 
 @pytest.fixture()
@@ -39,8 +17,13 @@ def tempdir(fs):
 
 @pytest.fixture(scope='module')
 def replace():
-    with Replacer() as r:
-        yield r.replace
+    with Replacer() as replace:
+        yield replace
+
+
+@pytest.fixture()
+def skip_no_yaml():
+    pytest.importorskip("yaml")
 
 
 pytest_collect_file = Sybil(
@@ -50,5 +33,5 @@ pytest_collect_file = Sybil(
         FileParser('tempdir')
     ],
     pattern='*.rst',
-    fixtures=['fs', 'replace', 'tempdir'],
+    fixtures=['fs', 'replace', 'tempdir', 'skip_no_yaml'],
 ).pytest()
