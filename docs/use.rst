@@ -7,24 +7,6 @@ This document goes into more detail than the quickstart and should cover enough
 functionality for most use cases. For examples of how to use this functionality,
 see :doc:`patterns`.
 
-Installation
-~~~~~~~~~~~~
-
-Configurator is available on the `Python Package Index`__ and can be installed
-with any tools for managing Python environments. The package has no hard
-dependencies beyond the standard library, but you will need extra libraries for most
-file formats from which you may want to read configuration information. As a result,
-you may wish to install Configurator with the appropriate extra requirement to meet
-your needs:
-
-.. code-block:: bash
-
-  pip install configurator[toml]
-  pip install configurator[yaml]
-
-
-__ https://pypi.org
-
 Getting configuration information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
