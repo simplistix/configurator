@@ -80,7 +80,8 @@ The parser can also be specified as a callable, if you have one-off unusual pars
 >>> Config.from_text(text, python)
 configurator.config.Config({'format': 'not json'})
 
-If you need to add support for a new config file format, see :doc:`parsers`.
+If you need to add support for a new config file format or wish to use a different parser
+for existing file formats, see :ref:`parsers`.
 
 It is also quite normal to instantiate a :class:`Config` and then :doc:`merge <mapping>`
 configuration into it from several other sources:
@@ -277,3 +278,28 @@ Now, the application code can use the config in a uniform way:
 
 >>> for action in config.actions:
 ...     output = action_handlers[action.type](*action.args, **action.kw.data)
+
+.. _parsers:
+
+Adding new parsers
+~~~~~~~~~~~~~~~~~~
+
+.. py:currentmodule:: configurator
+
+When creating :class:`Config` instances using :meth:`~Config.from_text`,
+:meth:`~Config.from_stream` or :meth:`~Config.from_path` you may have to specify a parser.
+This can be either a string or a callable.
+
+When it's a callable, which should be rare, the callable should take a single argument
+that will be the stream from which text can be read. A nested python data structure
+containing the parsed results of the stream should be returned, made up of only simple python
+data types as would be returned by :func:`ast.literal_eval`.
+
+More commonly, it will either be deduced from the extension of the file being processed or
+can be provided as a textual file extension such as ``'yaml'``, ``'toml'`` or ``'json'``.
+Where these require third party libraries, you may need to install extras for them to be
+available:
+
+.. code-block:: bash
+
+  pip install configurator[yaml,toml]
