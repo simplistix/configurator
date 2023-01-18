@@ -188,7 +188,10 @@ operation:
 >>> from argparse import Namespace
 >>> from configurator import if_supplied
 >>> config = Config()
->>> config.merge(source=Namespace(my_option=None), mapping={if_supplied('my_option'): 'some_key'})
+>>> config.merge(
+...     source=Namespace(my_option=None),
+...     mapping={if_supplied('my_option'): 'some_key'}
+... )
 >>> config
 configurator.config.Config({})
 
@@ -198,10 +201,10 @@ Merging
 This is the process of combining two :class:`Config` objects.
 By default, this involves unioning dictionaries and concatenating lists:
 
->>> config1 = Config({'dict': {'a': 1, 'b': 2}, 'list': ['a', 'b']})
->>> config2 = Config({'dict': {'b': 3, 'c': 4}, 'list': ['c', 'd']})
+>>> config1 = Config({'dict': {'a': 1, 'b': 2}, 'list': ['a']})
+>>> config2 = Config({'dict': {'b': 3, 'c': 4}, 'list': ['b']})
 >>> config1 + config2
-configurator.config.Config({'dict': {'a': 1, 'b': 3, 'c': 4}, 'list': ['a', 'b', 'c', 'd']})
+configurator.config.Config({'dict': {'a': 1, 'b': 3, 'c': 4}, 'list': ['a', 'b']})
 
 Merging is performed using a configurable mapping of python types to merge functions.
 This can be augmented or completely replaced by using the :meth:`~Config.merge` method.
