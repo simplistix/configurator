@@ -27,7 +27,7 @@ class Config(ConfigNode):
     def from_text(cls, text, parser, encoding='ascii'):
         """
         Construct a :class:`Config` from the provided ``text`` using the specified
-        :doc:`parser <parsers>`. If ``text`` is provided as :class:`bytes`, then
+        :ref:`parser <parsers>`. If ``text`` is provided as :class:`bytes`, then
         the ``encoding`` specified will be used to decode it.
         """
         if isinstance(text, bytes):
@@ -39,7 +39,7 @@ class Config(ConfigNode):
         """
         Construct a :class:`Config` from a stream such as a :func:`file <open>`.
         If the stream does not have a ``name`` attribute from which the correct
-        parser can be guessed, :doc:`parser <parsers>` must be specified.
+        parser can be guessed, :ref:`parser <parsers>` must be specified.
         If ``text`` is provided as :class:`bytes`, then the ``encoding``
         specified will be used to decode it.
         """
@@ -60,7 +60,7 @@ class Config(ConfigNode):
         Construct a :class:`Config` from file specified as either a string path or a
         :class:`pathlib.Path`.
         This path with have ``~`` expanded. If specified, ``encoding`` will be used to
-        decode the content of the file. An explicit :doc:`parser <parsers>`
+        decode the content of the file. An explicit :ref:`parser <parsers>`
         can be specified, if necessary, but the correct one will usually be
         guessed from the file extension.
 
