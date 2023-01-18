@@ -5,7 +5,8 @@ Using Configurator
 
 This document goes into more detail than the quickstart and should cover enough
 functionality for most use cases. For examples of how to use this functionality,
-see :doc:`patterns`.
+see :doc:`patterns`. For details of all the classes, methods and functions available, see
+the :doc:`api`.
 
 Getting configuration information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -31,7 +32,7 @@ A :class:`Config` object can be obtained as follows:
 >>> Config.from_path('/etc/myapp.yml')
 configurator.config.Config({'myapp': {'cache': {'location': '/var/my_app/'}}})
 
-If you already have an open stream, it woud be this instead:
+If you already have an open stream, it would be this instead:
 
 >>> with open('/etc/myapp.yml') as source:
 ...     Config.from_stream(source)
@@ -46,7 +47,7 @@ Finally, if you have the text source in memory, you would do the following:
 >>> Config.from_text(text, 'yaml')
 configurator.config.Config({'cache': {'location': '/var/my_app/'}})
 
-Note that because we have no way of guessing, the parser must be specified.
+When parsing strings, the parser must be specified because we have no way of guessing.
 The ``parser`` parameter can also be used with :meth:`Config.from_path` and
 :meth:`Config.from_stream` to explicitly specify a parser, regardless of the name of
 the file.
@@ -95,10 +96,10 @@ item and attribute access to be used interchangeably.
 So, with a config such as this:
 
 >>> config = Config({'logs': '/var/my_app/',
-...                  'sources': [{'url': 'http://example.com/1',
+...                  'sources': [{'url': 'https://example.com/1',
 ...                               'username': 'user1',
 ...                               'password': 'p1'},
-...                              {'url': 'http://example.com/2',
+...                              {'url': 'https://example.com/2',
 ...                               'username': 'user2',
 ...                               'password': 'p2'}]})
 
@@ -108,13 +109,13 @@ The various parts can be accessed as follows:
 '/var/my_app/'
 >>> for source in config.sources:
 ...     print(source.url, source.username, source.password)
-http://example.com/1 user1 p1
-http://example.com/2 user2 p2
+https://example.com/1 user1 p1
+https://example.com/2 user2 p2
 
 Item access can also be used, if preferred:
 
 >>> config['sources'][1]['url']
-'http://example.com/2'
+'https://example.com/2'
 
 Where it's more natural, configuration can also be treated like a dictionary.
 For example, with this config:

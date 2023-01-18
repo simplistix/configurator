@@ -86,11 +86,12 @@ For example, suppose we had this configuration:
 
 >>> config = Config({'actions': ['b', 'c']})
 
-Now we want to merge in this set of actions, to create the final sequence:
+Now we want to merge in this set of actions, but we'd like to insert them after ``b``
+to create the final sequence:
 
 >>> empty = Config(['a', 'd'])
 
-Using generative paths, we could map them in like this:
+Using generative paths, we could do this:
 
 >>> config.merge(source=empty, mapping={
 ...     source[0]: target['actions'].insert(0),
