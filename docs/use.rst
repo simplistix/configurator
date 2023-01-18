@@ -105,14 +105,15 @@ So, with a config such as this:
 
 The various parts can be accessed as follows:
 
->>> config.logs
+>>> config['logs']
 '/var/my_app/'
->>> for source in config.sources:
-...     print(source.url, source.username, source.password)
+>>> for source in config['sources']:
+...     print(source['url'], source['username'], source['password'])
 https://example.com/1 user1 p1
 https://example.com/2 user2 p2
 
-Item access can also be used, if preferred:
+Using item access allows configuration that contains both mappings and sequences to be
+traversed easily and reliably:
 
 >>> config['sources'][1]['url']
 'https://example.com/2'
@@ -121,26 +122,51 @@ Where it's more natural, configuration can also be treated like a dictionary.
 For example, with this config:
 
 >>> config = Config({'databases': {'main': 'mysql://foo@bar/main',
-...                                'backup': 'mysql://baz@bob/backup'},
-...                  'priority': ['main', 'backup']})
+...                                'backup': 'mysql://baz@bob/backup'}})
 
 You could iterate through the databases as follows:
 
->>> for name, url in sorted(config.databases.items()):
+>>> for name, url in sorted(config['databases'].items()):
 ...     print(name, url)
 backup mysql://baz@bob/backup
 main mysql://foo@bar/main
 
 Likewise, if a key may not be present:
 
->>> config.databases.get('read_only', default=config.databases.get('backup'))
+>>> config['databases'].get('read_only', default=config['databases'].get('backup'))
 'mysql://baz@bob/backup'
+
+As a convenience, attribute access may also be used where possible.
+So, with a config such as this:
+
+>>> config = Config({'sources': [{'url': 'https://example.com/1',
+...                               'username': 'user1',
+...                               'password': 'p1'},
+...                              {'url': 'https://example.com/2',
+...                               'username': 'user2',
+...                               'password': 'p2'}]})
+
+You could take advantage of attribute access as follows:
+
+>>> for source in config.sources:
+...     print(source.username, source.password)
+user1 p1
+user2 p2
+
+.. warning::
+
+  Care must be taken when using attribute access as methods and attributes provided by
+  configurator will take precedence over any configuration information.
 
 As a fallback, every node in the config will have a :attr:`~node.ConfigNode.data` attribute
 that can be used to get hold of the underlying configuration information:
 
->>> config.priority.data
-['main', 'backup']
+>>> type(config.sources)
+<class 'configurator.node.ConfigNode'>
+>>> type(config.sources.data)
+<class 'list'>
+>>> len(config.sources.data)
+2
 
 Combining sources of configuration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
