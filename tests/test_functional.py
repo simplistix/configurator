@@ -89,6 +89,7 @@ class TestFunctional:
 
 
 def test_fake_fs(fs):
+    pytest.importorskip("yaml")
     fs.create_file('/foo/bar.yml', contents='foo: 1\n')
     config = Config.from_path('/foo/bar.yml')
     compare(config.foo, expected=1)
