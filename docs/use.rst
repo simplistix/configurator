@@ -168,6 +168,11 @@ that can be used to get hold of the underlying configuration information:
 >>> len(config.sources.data)
 2
 
+.. warning::
+  :attr:`~node.ConfigNode.data` should not be modified as problems will occur
+  if the :class:`~node.ConfigNode` hierarchy and :attr:`~node.ConfigNode.data`
+  hierarchy become out of sync.
+
 Combining sources of configuration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -263,20 +268,19 @@ with a function such as this:
 
 .. code-block:: python
 
-    def normalise(data):
-        actions = []
-        for action_data in data:
-            (type_, params), = action_data.items()
+    def normalise(actions):
+        for action in actions:
+            (type_, params), = action.data.items()
             if isinstance(params, dict):
-                actions.append({'type': type_, 'args': (), 'kw': params})
+                data = {'type': type_, 'args': (), 'kw': params}
             else:
-                actions.append({'type': type_, 'args': (params,), 'kw': {}})
-        data[:] = actions
+                data = {'type': type_, 'args': (params,), 'kw': {}}
+            action.set(data)
 
 This can be applied to the raw config as follows:
 
 >>> config = Config.from_path('/etc/my_app/config.yaml')
->>> normalise(config.actions.data)
+>>> normalise(config.actions)
 
 .. invisible-code-block: python
 
