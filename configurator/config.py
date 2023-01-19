@@ -157,8 +157,7 @@ class Config(ConfigNode):
         This method returns a context manager that, when its context is left,
         restores the configuration data used to whatever was in place
         before :meth:`push` was called, regardless of any further :meth:`push`
-        or meth:`merge` calls, or other modifications to :attr:`data` on this
-        :class:`Config` object.
+        or :meth:`merge` calls, or other modifications to this :class:`Config` object.
         """
         if empty:
             base = Config()

@@ -15,9 +15,15 @@ class ConfigNode:
     def __init__(self, data=None, container=None, accessor=None):
         if data is None:
             data = {}
+
         #: The underlying python object for this node, often a :class:`dict`
-        #: or a :class:`list`. While this is part of the public API, care should
-        #: be taken when using it, particularly if you choose to modify it.
+        #: or a :class:`list`.
+        #:
+        #: .. warning::
+        #:
+        #:   :attr:`data` may be read but should not be modified as problems will occur
+        #:   if the :class:`~configurator.node.ConfigNode` hierarchy and :attr:`data`
+        #:   hierarchy become out of sync.
         self.data = data
         self._container = container
         self._accessor = accessor

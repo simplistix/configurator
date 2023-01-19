@@ -359,7 +359,9 @@ sections appropriately:
 
     def build_app(config_path):
         config = Config.from_path(config_path)
-        app = MyApp(**config.data.pop('my_app'))
+        app_config = config.my_app
+        app = MyApp(**app_config.data)
+        del config.my_app
         return configure_framework(app, **config.data)
 
 Combining the above function and configuration file might result in:
