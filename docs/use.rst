@@ -11,6 +11,11 @@ the :doc:`api`.
 Getting configuration information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Several ways of obtaining configuration information are available.
+
+Files, streams and text
+-----------------------
+
 .. invisible-code-block: python
 
     fs.create_file('/etc/myapp.yml',
@@ -66,7 +71,105 @@ configurator.config.Config({'format': 'not json'})
 If you need to add support for a new config file format or wish to use a different parser
 for existing file formats, see :ref:`parsers`.
 
-It is also quite normal to instantiate a :class:`Config` and then :doc:`merge <mapping>`
+Environment variables
+---------------------
+
+Configuration can be obtained from environment variables, the best approach depends on the
+number and type of variables you're starting from.
+
+If it's a small number and you need to add them do arbitrary configuration locations,
+then :doc:`mapping <mapping>` works well:
+
+.. invisible-code-block: python
+
+    replace('os.environ.OMP_NUM_THREADS', '2', strict=False)
+    replace('os.environ.CACHE_DIRECTORY', '/var/cache/it/', strict=False)
+    import os
+
+>>> from configurator import Config, convert, required
+>>> config = Config()
+>>> config.merge(os.environ, {
+...     convert('OMP_NUM_THREADS', int): 'threads',
+...     required('CACHE_DIRECTORY'): 'cache.location',
+... })
+>>> config
+configurator.config.Config({'cache': {'location': '/var/cache/it/'}, 'threads': 2})
+
+If you have many environment variables with the same prefix, :meth:`Config.from_env`
+can be used:
+
+.. invisible-code-block: python
+
+    replace('os.environ', {
+        'MYAPP_THREADS': '2',
+        'MYAPP_CACHE_DIRECTORY': '/var/logs/myapp/'
+    })
+
+>>> os.environ['MYAPP_THREADS']
+'2'
+>>> os.environ['MYAPP_CACHE_DIRECTORY']
+'/var/logs/myapp/'
+>>> Config.from_env('MYAPP_')
+configurator.config.Config({'cache_directory': '/var/logs/myapp/', 'threads': '2'})
+
+If the environment variables contain patterns that indicate their type as a suffix, then
+:meth:`~Config.from_env` can do the type conversion:
+
+.. invisible-code-block: python
+
+    replace('os.environ', {
+        'MYAPP_SERVER_PORT': '4242',
+        'MYAPP_CACHE_PATH': '/tmp/myapp'
+    })
+
+For example, given the following environment variables:
+
+>>> os.environ.get('MYAPP_SERVER_PORT')
+'4242'
+>>> os.environ.get('MYAPP_CACHE_PATH')
+'/tmp/myapp'
+
+Configuration could be extracted as follows:
+
+>>> from pathlib import Path
+>>> Config.from_env(prefix='MYAPP_', types={'PORT': int, 'PATH': Path})
+configurator.config.Config({'cache_path': PosixPath('/tmp/myapp'), 'server_port': 4242})
+
+If different prefixes indicate different configuration locations, then ``prefix`` can be
+a mapping:
+
+
+.. invisible-code-block: python
+
+    replace('os.environ', {
+        'MYAPP_POSTGRES_HOST': 'some-host',
+        'MYAPP_POSTGRES_PORT': '5432',
+        'MYAPP_REDIS_HOST': 'other-host',
+        'MYAPP_REDIS_PORT': '6379',
+    })
+
+>>> os.environ.get('MYAPP_POSTGRES_HOST')
+'some-host'
+>>> os.environ.get('MYAPP_POSTGRES_PORT')
+'5432'
+>>> os.environ.get('MYAPP_REDIS_HOST')
+'other-host'
+>>> os.environ.get('MYAPP_REDIS_PORT')
+'6379'
+>>> Config.from_env(prefix={
+...     'MYAPP_POSTGRES_': 'services.postgres',
+...     'MYAPP_REDIS_': 'services.redis'
+... })
+configurator.config.Config(
+{'services': {'postgres': {'host': 'some-host', 'port': '5432'},
+              'redis': {'host': 'other-host', 'port': '6379'}}}
+)
+
+
+Other sources
+-------------
+
+It is also quite normal to instantiate an empty :class:`Config` and then :doc:`merge <mapping>`
 configuration into it from several other sources:
 
 >>> Config()
@@ -173,11 +276,21 @@ that can be used to get hold of the underlying configuration information:
   if the :class:`~node.ConfigNode` hierarchy and :attr:`~node.ConfigNode.data`
   hierarchy become out of sync.
 
+If you want to have a :class:`~node.ConfigNode` even in the case of scalar values, then the
+:meth:`~node.ConfigNode.node` method can be used:
+
+>>> config = Config({'x': 1})
+>>> config.node('x')
+configurator.node.ConfigNode(1)
+
 Combining sources of configuration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 It's rare that configuration for an application will come from a single source and
 so configurator makes it easy to combine them.
+
+Simple overlaying
+-----------------
 
 The simplest way is by adding two :class:`Config` instances. This will recursively
 merge the underlying configuration data, unioning dictionary items and concatenating
@@ -188,25 +301,37 @@ sequences:
 >>> config1 + config2
 configurator.config.Config({'mapping': {'a': 1, 'b': 3, 'c': 4}, 'sequence': ['a', 'b']})
 
+Merging
+-------
+
 If you need to have more control over this process, :meth:`Config.merge` allows
 you to specify how merging will be performed per python object type:
 
 >>> config1 = Config([1, 2, 3, 4, 5])
 >>> config2 = Config([6, 7, 8, 9, 10])
 
->>> from configurator import default_mergers
->>> from itertools import chain, zip_longest
->>> def alternate(context, source, target):
-...     return [i for i in chain.from_iterable(zip_longest(target, source)) if i]
+In this case, we want to interleave the two lists when they are merged, which can be done
+with a function like this:
 
+.. code-block:: python
+
+    from itertools import chain, zip_longest
+
+    def alternate(context, source, target):
+        return [i for i in chain.from_iterable(zip_longest(target, source)) if i]
+
+We can use this with the :any:`default_mergers` to ensure that all list that are merged
+are interleaved:
+
+>>> from configurator import default_mergers
 >>> config1.merge(config2, mergers=default_mergers+{list: alternate})
 >>> config1
 configurator.config.Config([1, 6, 2, 7, 3, 8, 4, 9, 5, 10])
 
 .. note::
   :meth:`~Config.merge` mutates the :class:`Config` on which it is called
-  while addition leaves both of the source configs unmodified and returns a
-  new :class:`Config`.
+  while adding two :class:`Config` objects together leaves both of the source configs unmodified
+  and returns a new :class:`Config`.
 
 .. invisible-code-block: python
 
@@ -214,19 +339,28 @@ configurator.config.Config([1, 6, 2, 7, 3, 8, 4, 9, 5, 10])
     import os
     replace('os.environ.BAZ', 'True', strict=False)
 
+For more detailed documentation, see :doc:`mapping`.
+
+Mapping
+-------
+
 If you need more flexibility in how parts of the configuration source are mapped in,
 or if the source data structure is not compatible with merging, you can use a mapping:
 
 >>> source = Mock()
 >>> source.foo.bar = 'some_value'
-
->>> config = Config({'bar': {'type': 'foo'}, 'baz': False})
+>>> config = Config({'bar': {'type': 'foo'}})
 >>> config.merge(source, {'foo.bar': 'bar.name'})
+>>> config
+configurator.config.Config({'bar': {'name': 'some_value', 'type': 'foo'}})
+
+Mapping can also be used to convert data from a configuration source:
 
 >>> from configurator.mapping import convert
 >>> from ast import literal_eval
+>>> os.environ.get('BAZ')
+'True'
 >>> config.merge(os.environ, {convert('BAZ', literal_eval): 'baz'})
-
 >>> config
 configurator.config.Config({'bar': {'name': 'some_value', 'type': 'foo'}, 'baz': True})
 
@@ -242,6 +376,136 @@ detailed documentation on this see :doc:`mapping`.
             branch: master
         - run: "cat /foo/bar"
       """)
+
+Modifying configuration
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Once you have a :class:`Config` object, you may still need to modify the configuration
+information it contains.
+
+Adding and deleting
+-------------------
+
+Items can be added to a config using the mapping interface:
+
+>>> config = Config()
+>>> config['meaning'] = 42
+>>> config
+configurator.config.Config({'meaning': 42})
+
+If the name is compatible with Python syntax, then you can also use attribute assignment:
+
+>>> config.meaning = 'new'
+>>> config
+configurator.config.Config({'meaning': 'new'})
+
+If you need to remove an item, then you can do this using the mapping interface:
+
+>>> del config['meaning']
+>>> config
+configurator.config.Config({})
+
+If the name is compatible with Python syntax, then you can also use the attribute interface:
+
+>>> config = Config({'meaning': 'life'})
+>>> del config.meaning
+>>> config
+configurator.config.Config({})
+
+If the configuration is a list, then modifying items can be done using the sequence interface:
+
+>>> config = Config(['item1', 'item2', 'item3'])
+>>> config[0] = 'new'
+>>> config
+configurator.config.Config(['new', 'item2', 'item3'])
+
+This can also be used to remove items:
+
+>>> del config[1]
+>>> config
+configurator.config.Config(['new', 'item3'])
+
+If you need to set an item deep within a nesting that may or may not exist, then
+:meth:`~node.ConfigNode.node` can be used:
+
+>>> config = Config({'foo': {}})
+>>> config.node('foo.bar.baz', create=True).set(42)
+>>> config
+configurator.config.Config({'foo': {'bar': {'baz': 42}}})
+
+If the location traverses through lists, then a :class:`~configurator.path.Path` starting
+from :any:`source <configurator.source>` can be used:
+
+>>> from configurator import source
+>>> config = Config([{'name': 'db1', 'password': 'compromised'}])
+>>> config.node(source[0]['password']).set('secure')
+>>> config
+configurator.config.Config([{'name': 'db1', 'password': 'secure'}])
+
+Pushing and popping
+-------------------
+
+Some frameworks and patterns make use of a global configuration object which needs to be referenced
+before the configuration is obtained from its sources. For this reason, Configurator provides the
+facility to push configuration onto an existing :class:`Config` and later pop it off.
+
+For example, given this global config:
+
+>>> config = Config({'option1': 'default', 'option3': 'foo'})
+
+Additional configuration can be pushed onto it once available:
+
+>>> config.push(Config({'option1': 'non-default', 'option2': 42}))
+<configurator.config.PushContext object at ...>
+>>> config
+configurator.config.Config({'option1': 'non-default', 'option2': 42, 'option3': 'foo'})
+
+If that configuration is no longer relevant, it can be popped off:
+
+>>> config.pop()
+>>> config
+configurator.config.Config({'option1': 'default', 'option3': 'foo'})
+
+This process can also be used for managing a context:
+
+>>> with config.push(Config({'option1': 'non-default'})):
+...     print(config['option1'])
+non-default
+
+If you wish to push an entirely new configuration, this can be done as follows:
+
+>>> config = Config({'option1': 'default', 'option3': 'foo'})
+>>> with config.push(Config({'option1': 'non-default', 'option2': 42}), empty=True):
+...     print(config)
+configurator.config.Config({'option1': 'non-default', 'option2': 42})
+
+You can also use this method to preserve configuration and restore it to its previous state
+as follows:
+
+>>> config = Config({'option1': 'default', 'option3': 'foo'})
+>>> with config.push():
+...     config['option1'] = 'bad'
+...     del config['option3']
+>>> config
+configurator.config.Config({'option1': 'default', 'option3': 'foo'})
+
+Cloning
+-------
+
+If you need a complete and separate copy of a :class:`Config` for any reason, one can be
+obtained using the :meth:`~Config.clone` method:
+
+>>> original = Config({'x': {'y': 'z'}})
+>>> scratch = original.clone()
+>>> scratch['a'] = 'b'
+>>> scratch.node('x.y').set('z-')
+>>> scratch
+configurator.config.Config({'a': 'b', 'x': {'y': 'z-'}})
+>>> original
+configurator.config.Config({'x': {'y': 'z'}})
+
+Transforming
+------------
 
 One other form of manipulation that's worth mentioning is when incoming data isn't
 quite the right shape. Take this YAML:
