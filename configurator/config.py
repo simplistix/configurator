@@ -1,6 +1,6 @@
 import os
 from copy import deepcopy
-from io import open, StringIO
+from io import open, StringIO, BytesIO
 from os.path import exists, expanduser
 
 from .mapping import load, store, target, convert, if_supplied
@@ -30,9 +30,16 @@ class Config(ConfigNode):
         :ref:`parser <parsers>`. If ``text`` is provided as :class:`bytes`, then
         the ``encoding`` specified will be used to decode it.
         """
-        if isinstance(text, bytes):
-            text = text.decode(encoding)
-        return cls.from_stream(StringIO(text), parser)
+        if parser == 'toml' or getattr(parser, '__module__', '').startswith('toml'):
+            if isinstance(text, bytes):
+                stream = BytesIO(text)
+            else:
+                stream = BytesIO(text.encode('utf-8'))
+        else:
+            if isinstance(text, bytes):
+                text = text.decode(encoding)
+            stream = StringIO(text)
+        return cls.from_stream(stream, parser)
 
     @classmethod
     def from_stream(cls, stream, parser=None):
@@ -70,7 +77,14 @@ class Config(ConfigNode):
         full_path = expanduser(path)
         if optional and not exists(full_path):
             return cls()
-        with open(full_path, encoding=encoding) as stream:
+        mode = 'rt'
+        if parser is None:
+            if str(path).endswith('.toml'):
+                mode = 'rb'
+        else:
+            if getattr(parser, '__module__', '').startswith('toml'):
+                mode = 'rb'
+        with open(full_path, encoding=encoding, mode=mode) as stream:
             return cls.from_stream(stream, parser)
 
     @classmethod

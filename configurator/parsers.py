@@ -1,3 +1,5 @@
+import sys
+
 from collections import defaultdict
 
 
@@ -8,11 +10,19 @@ class ParseError(Exception):
     """
 
 
+if sys.version_info >= (3, 11):
+    # stdlib
+    _toml_mod = 'tomllib'
+else:
+    _toml_mod = 'tomli'
+
+
 class Parsers(defaultdict):
 
+    # file extension: module name, method name
     supported = {
         'json': ('json', 'load'),
-        'toml': ('toml', 'load'),
+        'toml': (_toml_mod, 'load'),
         'yml': ('yaml', 'safe_load'),
         'yaml': ('yaml', 'safe_load'),
     }
