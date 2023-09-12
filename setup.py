@@ -25,7 +25,7 @@ setup(
     python_requires=">=3.6",
     extras_require=dict(
         yaml=['pyyaml'],
-        toml=['toml'],
+        toml=['tomli; python_version < "3.11"'],
         test=[
             'jinja2',
             'mock',

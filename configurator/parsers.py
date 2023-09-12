@@ -1,4 +1,5 @@
 from collections import defaultdict
+from importlib import import_module
 
 
 class ParseError(Exception):
@@ -10,9 +11,10 @@ class ParseError(Exception):
 
 class Parsers(defaultdict):
 
+    # file extension: module name, method name
     supported = {
         'json': ('json', 'load'),
-        'toml': ('toml', 'load'),
+        'toml': ('configurator._toml', 'load'),
         'yml': ('yaml', 'safe_load'),
         'yaml': ('yaml', 'safe_load'),
     }
@@ -23,5 +25,5 @@ class Parsers(defaultdict):
         except KeyError:
             raise ParseError('No parser found for {!r}'.format(extension))
         else:
-            module = __import__(module_name)
+            module = import_module(module_name)
             return getattr(module, parser_name)
