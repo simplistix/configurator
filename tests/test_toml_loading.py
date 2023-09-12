@@ -39,18 +39,18 @@ def test_load_toml_from_byte_stream_explicit_parser(tmp_path):
 def test_load_toml_from_text_stream_implicit_parser(tmp_path):
     path = tmp_path / 'test.toml'
     path.write_bytes(b'k = "v"')
-    msg = "must be opened in binary mode"
-    with path.open(mode="rt") as stream, pytest.raises(TypeError, match=msg):
-        Config.from_stream(stream)
+    with path.open(mode="rt") as stream:
+        config = Config.from_stream(stream)
+    compare(config.k, "v")
 
 
 def test_load_toml_from_text_stream_explicit_parser(tmp_path):
     path = tmp_path / 'test.toml'
     path.write_bytes(b'k = "v"')
     parser = Config.parsers['toml']
-    msg = "must be opened in binary mode"
-    with path.open(mode="rt") as stream, pytest.raises(TypeError, match=msg):
-        Config.from_stream(stream, parser)
+    with path.open(mode="rt") as stream:
+        config = Config.from_stream(stream, parser)
+    compare(config.k, "v")
 
 
 def test_load_toml_from_text():
