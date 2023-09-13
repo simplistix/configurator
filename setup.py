@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='configurator',
-    version='3.1.0',
+    version='3.2.0',
     author='Chris Withers',
     author_email='chris@withers.org',
     license='MIT',

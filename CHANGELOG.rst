@@ -1,6 +1,16 @@
 Changes
 =======
 
+3.2.0 (13 Sep 2023)
+-------------------
+
+- Use the standard library's ``tomlib`` module on Python 3.11 and above and
+  switch to `tomli`__ for earlier versions.
+
+  __ https://github.com/hukkin/tomli
+
+Thanks to Wim Glenn for the work!
+
 3.1.0 (28 Nov 2022)
 -------------------
 
