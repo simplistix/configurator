@@ -35,7 +35,8 @@ setup(
             'requests',
             'sybil',
             'testfixtures',
-            'voluptuous',
+            'voluptuous; python_version >= "3.7"',
+            'voluptuous<0.14; python_version < "3.7"',
         ],
         build=['sphinx', 'furo', 'setuptools-git', 'twine', 'wheel']
     ),
