@@ -103,7 +103,8 @@ can be used:
     replace('os.environ', {
         'MYAPP_THREADS': '2',
         'MYAPP_CACHE_DIRECTORY': '/var/logs/myapp/'
-    })
+    # pyfakefs installes a fake os module!
+    }, strict=False)
 
 >>> os.environ['MYAPP_THREADS']
 '2'
